@@ -7,9 +7,9 @@ final class TrackerSettingsViewController: UIViewController {
                            "🍓", "🫐", "🥝", "🍅", "🫒", "🥥"
     ]
     
-    private let habitTypeButtons: [SettingsCellModel] = [
-        SettingsCellModel(title: "Категория", accessoryType: .arrow, switchValue: false),
-        SettingsCellModel(title: "Расписание", accessoryType: .arrow, switchValue: false)
+    private let habitTypeButtons: [TrackerSettingsCellModel] = [
+        TrackerSettingsCellModel(title: "Категория", subTitle: nil),
+        TrackerSettingsCellModel(title: "Расписание", subTitle: nil)
     ]
     
     private let label: UILabel = {
@@ -66,7 +66,7 @@ final class TrackerSettingsViewController: UIViewController {
         super.viewDidLoad()
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
-        categoryAndScheduleTableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.reuseID)
+        categoryAndScheduleTableView.register(TrackerSettingsTableViewCell.self, forCellReuseIdentifier: TrackerSettingsTableViewCell.reuseID)
         emojisCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
         emojisCollectionView.dataSource = self
         emojisCollectionView.delegate = self
@@ -135,8 +135,8 @@ extension TrackerSettingsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.reuseID, for: indexPath)
-        guard let settingsCell = cell as? SettingsTableViewCell else { return cell }
+        let cell = tableView.dequeueReusableCell(withIdentifier: TrackerSettingsTableViewCell.reuseID, for: indexPath)
+        guard let settingsCell = cell as? TrackerSettingsTableViewCell else { return cell }
         settingsCell.configure(with: habitTypeButtons[indexPath.row])
         return settingsCell
     }

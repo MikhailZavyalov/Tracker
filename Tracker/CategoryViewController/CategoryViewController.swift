@@ -40,7 +40,7 @@ final class CategoryViewController: UIViewController {
         
         categoriesTableView.dataSource = self
         categoriesTableView.delegate = self
-        categoriesTableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.reuseID)
+        categoriesTableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseID)
         addCategoryButton.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
         view.backgroundColor = .white
         

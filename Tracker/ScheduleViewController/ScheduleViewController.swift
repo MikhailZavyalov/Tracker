@@ -2,14 +2,14 @@ import UIKit
 import SwiftUI
 
 final class ScheduleViewController: UIViewController {
-    private let weekDays: [SettingsCellModel] = [
-        SettingsCellModel(title: "Понедельник", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Вторник", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Среда", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Четверг", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Пятница", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Суббота", accessoryType: .switch, switchValue: false),
-        SettingsCellModel(title: "Воскресенье", accessoryType: .switch, switchValue: false)
+    private let weekDays: [ScheduleCellModel] = [
+        ScheduleCellModel(title: "Понедельник", switchValue: false),
+        ScheduleCellModel(title: "Вторник", switchValue: false),
+        ScheduleCellModel(title: "Среда", switchValue: false),
+        ScheduleCellModel(title: "Четверг", switchValue: false),
+        ScheduleCellModel(title: "Пятница", switchValue: false),
+        ScheduleCellModel(title: "Суббота", switchValue: false),
+        ScheduleCellModel(title: "Воскресенье", switchValue: false)
     ]
     
     let scheduleLable: UILabel = {
@@ -37,7 +37,7 @@ final class ScheduleViewController: UIViewController {
         super.viewDidLoad()
         scheduleTableView.dataSource = self
         scheduleTableView.delegate = self
-        scheduleTableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.reuseID)
+        scheduleTableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseID)
         scheduleDoneButton.addTarget(self, action: #selector(scheduleDoneButtonTapped), for: .touchUpInside)
         view.backgroundColor = .white
         setupConstraints()
@@ -77,8 +77,8 @@ extension ScheduleViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.reuseID, for: indexPath)
-        guard let oneDayCell = cell as? SettingsTableViewCell else { return cell }
+        let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseID, for: indexPath)
+        guard let oneDayCell = cell as? ScheduleTableViewCell else { return cell }
         oneDayCell.configure(with: weekDays[indexPath.row])
         return oneDayCell
     }

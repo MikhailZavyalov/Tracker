@@ -1,16 +1,11 @@
 import UIKit
 import SwiftUI
 
-final class SettingsTableViewCell: UITableViewCell {
+final class ScheduleTableViewCell: UITableViewCell {
     var onValueChanged: ((_ switchValue: Bool) -> Void)?
     
     private let titleLabel = UILabel()
     
-    private let accessoryImageView: UIImageView = {
-        let accessoryImageView = UIImageView()
-        accessoryImageView.image = .checkmark
-        return accessoryImageView
-    }()
     private let uiSwitch: UISwitch = {
        let uiSwitch = UISwitch()
         uiSwitch.onTintColor = .blue
@@ -26,8 +21,6 @@ final class SettingsTableViewCell: UITableViewCell {
         contentView.addSubview(uiSwitch)
         uiSwitch.translatesAutoresizingMaskIntoConstraints = false
         contentView.backgroundColor = .lightGray
-        contentView.addSubview(accessoryImageView)
-        accessoryImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         
         setupConstraints()
@@ -37,16 +30,9 @@ final class SettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with model: SettingsCellModel) {
+    func configure(with model: ScheduleCellModel) {
         titleLabel.text = model.title
         uiSwitch.isOn = model.switchValue
-        [accessoryImageView, uiSwitch].forEach { $0.isHidden = true }
-        switch model.accessoryType {
-        case .switch:
-            uiSwitch.isHidden = false
-        case .arrow:
-            accessoryImageView.isHidden = false
-        }
     }
     
     @objc
@@ -61,11 +47,7 @@ final class SettingsTableViewCell: UITableViewCell {
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             uiSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            uiSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            accessoryImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            accessoryImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            accessoryImageView.widthAnchor.constraint(equalToConstant: 30),
-            accessoryImageView.heightAnchor.constraint(equalToConstant: 30),
+            uiSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
         ]
         
         constraints.forEach {
@@ -81,3 +63,4 @@ final class SettingsTableViewCell: UITableViewCell {
 //        return UIViewRepresented(makeUIView: { _ in SettingsTableViewCell(style: .default, reuseIdentifier: nil) })
 //    }
 //}
+
