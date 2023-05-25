@@ -2,12 +2,20 @@ import UIKit
 import SwiftUI
 
 final class TrackerSettingsViewController: UIViewController {
-    let emojisForHabit = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌",
+    var onNewTrackerCreated: ((Tracker) -> Void)?
+    
+    private var currentSettings: TrackerSettings = .empty {
+        didSet {
+            updateUI()
+        }
+    }
+    
+    private let emojisForHabit = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌",
                            "🍍", "🥭", "🍎", "🍏", "🍐", "🍒",
                            "🍓", "🫐", "🥝", "🍅", "🫒", "🥥"
     ]
     
-    private let habitTypeButtons: [TrackerSettingsCellModel] = [
+    private var habitTypeButtons: [TrackerSettingsCellModel] = [
         TrackerSettingsCellModel(title: "Категория", subTitle: nil),
         TrackerSettingsCellModel(title: "Расписание", subTitle: nil)
     ]
@@ -64,6 +72,11 @@ final class TrackerSettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // FIXME: - удалить, когда будет сделано emoji и colorPicker
+        currentSettings.emoji = "🏆"
+        currentSettings.color = .init(uiColor: .green)
+        
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
         categoryAndScheduleTableView.register(TrackerSettingsTableViewCell.self, forCellReuseIdentifier: TrackerSettingsTableViewCell.reuseID)
@@ -73,11 +86,17 @@ final class TrackerSettingsViewController: UIViewController {
         view.backgroundColor = .white
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingChanged)
         
         setupConstraints()
     }
     
-    func setupConstraints() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        textField.resignFirstResponder()
+    }
+    
+    private func setupConstraints() {
         view.addSubview(categoryAndScheduleTableView)
         categoryAndScheduleTableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -98,6 +117,7 @@ final class TrackerSettingsViewController: UIViewController {
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
+        
         
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -120,12 +140,27 @@ final class TrackerSettingsViewController: UIViewController {
         ])
     }
     
-    @objc func cancelButtonTapped() {
-        print("cancelButtonTapped")
+    @objc private func cancelButtonTapped() {
+        dismiss(animated: true)
     }
     
-    @objc func createButtonTapped() {
-        print("createButtonTapped")
+    @objc private func createButtonTapped() {
+        guard let tracker = currentSettings.makeTracker() else { return }
+        onNewTrackerCreated?(tracker)
+    }
+    
+    @objc private func textFieldValueChanged() {
+        currentSettings.title = textField.text
+    }
+    
+    private func updateUI() {
+        if currentSettings.makeTracker() != nil {
+            createButton.backgroundColor = .black
+            createButton.isUserInteractionEnabled = true
+        } else {
+            createButton.backgroundColor = .lightGray
+            createButton.isUserInteractionEnabled = false
+        }
     }
 }
 
@@ -148,13 +183,23 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         case 0:
             let categoryViewController = CategoryViewController()
             categoryViewController.onUserDidSelectCategory = { [weak categoryViewController] categoryTitle in
-                // Добавить тайтл в ячейку с категорией
-                print(categoryTitle)
+                self.habitTypeButtons[0].subTitle = categoryTitle
+                self.currentSettings.categoryTitle = categoryTitle
+                tableView.reloadData()
                 categoryViewController?.dismiss(animated: true)
             }
             present(categoryViewController, animated: true)
         case 1:
-            let scheduleViewController = ScheduleViewController()
+            let scheduleViewController = ScheduleViewController(enabledWeekDays: currentSettings.daysOfWeek)
+            scheduleViewController.onUserDidSelectSchedule = { [weak scheduleViewController] enabledDays in
+                self.currentSettings.daysOfWeek = enabledDays
+                self.habitTypeButtons[1].subTitle = enabledDays
+                    .map {
+                        $0.shortName
+                    }.joined(separator: ", ")
+                tableView.reloadData()
+                scheduleViewController?.dismiss(animated: true)
+            }
             present(scheduleViewController, animated: true)
         default:
             return

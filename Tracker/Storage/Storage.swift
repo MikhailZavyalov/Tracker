@@ -1,18 +1,9 @@
 import Foundation
 
 final class Storage {
-    private static let trackersKey: String = "trackersKey"
     private static let trackerCategoriesKey: String = "trackerCategoriesKey"
     private static let trackerRecordsKey: String = "trackerRecordsKey"
     
-    static var trackers: [Tracker] {
-        get {
-            getValue(forKey: trackersKey)
-        }
-        set {
-            setValue(forKey: trackersKey, value: newValue)
-        }
-    }
     static var trackerCategories: [TrackerCategory] {
         get {
             getValue(forKey: trackerCategoriesKey)

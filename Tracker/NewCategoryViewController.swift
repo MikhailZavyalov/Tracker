@@ -81,13 +81,23 @@ final class NewCategoryViewController: UIViewController {
     }
     
     private func updateNewCategoryDoneButtonState() {
-        if newCategoryTextField.text == nil || newCategoryTextField.text!.isEmpty {
-            newCategoryDoneButton.backgroundColor = .lightGray
-            newCategoryDoneButton.isUserInteractionEnabled = false
-        } else {
+        if isTextValid() {
             newCategoryDoneButton.backgroundColor = .black
             newCategoryDoneButton.isUserInteractionEnabled = true
+        } else {
+            newCategoryDoneButton.backgroundColor = .lightGray
+            newCategoryDoneButton.isUserInteractionEnabled = false
         }
+    }
+    
+    private func isTextValid() -> Bool {
+        newCategoryTextField.text != nil
+        && newCategoryTextField.text?.isEmpty == false
+        && (newCategoryTextField.text!.unicodeScalars.contains { scalar in
+            CharacterSet.alphanumerics.contains(scalar)
+        } || newCategoryTextField.text!.contains { char in
+            char.isEmoji
+        })
     }
 }
 

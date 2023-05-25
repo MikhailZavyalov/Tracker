@@ -2,6 +2,8 @@ import UIKit
 import SwiftUI
 
 final class AddNewTrackerViewController: UIViewController {
+    var onNewTrackerCreated: ((Tracker) -> Void)?
+    
     private let addNewTrackerViewLabel: UILabel = {
         let addNewTrackerViewLabel = UILabel()
         addNewTrackerViewLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -63,12 +65,20 @@ final class AddNewTrackerViewController: UIViewController {
     @objc
     private func habitButtonTapped() {
         let viewController = TrackerSettingsViewController()
+        viewController.onNewTrackerCreated = { tracker in
+            viewController.dismiss(animated: true)
+            self.onNewTrackerCreated?(tracker)
+        }
         present(viewController, animated: true)
     }
     
     @objc
     private func irregularEventButtonTapped() {
         let viewController = TrackerSettingsViewController()
+        viewController.onNewTrackerCreated = { tracker in
+            viewController.dismiss(animated: true)
+            self.onNewTrackerCreated?(tracker)
+        }
         present(viewController, animated: true)
     }
 }

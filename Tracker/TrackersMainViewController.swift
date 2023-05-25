@@ -19,16 +19,15 @@ class TrackersMainViewController: UIViewController {
         return uiSearchTextField
     }()
     
-    private let trackerCategories: [TrackerCategory] = [
-        TrackerCategory(name: "Knight", trackers: [
-            Tracker(id: UUID(), color: .init(uiColor: .yellow), title: "Sword", emoji: "😀", dateLabel: "1 day", daysOfWeek: [.monday]),
-            Tracker(id: UUID(), color: .init(uiColor: .green), title: "Shield", emoji: "😘", dateLabel: "2 days", daysOfWeek: [.monday])
-        ]),
-        
-        TrackerCategory(name: "Kittens", trackers: [
-            Tracker(id: UUID(), color: .init(uiColor: .red), title: "Eat", emoji: "😈", dateLabel: "Everyday", daysOfWeek: [.monday])
-        ])
-    ]
+    private var trackerCategories: [TrackerCategory] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    private var visibleTrackerCategories: [TrackerCategory] {
+        trackerCategories.filter { !$0.trackers.isEmpty }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +37,7 @@ class TrackersMainViewController: UIViewController {
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
         collectionView.dataSource = self
         collectionView.delegate = self
+        trackerCategories = Storage.trackerCategories
         
         navBarConfig()
         setupConstraints()
@@ -78,7 +78,17 @@ class TrackersMainViewController: UIViewController {
     
     @objc
     private func plusTapped() {
-        present(AddNewTrackerViewController(), animated: true)
+        let addNewTrackerViewController = AddNewTrackerViewController()
+        addNewTrackerViewController.onNewTrackerCreated = { tracker in
+            let categoryIndex = Storage.trackerCategories.firstIndex { category in
+                category.name == tracker.categoryTitle
+            }
+            // FIXME: - убрать forceunwrap
+            Storage.trackerCategories[categoryIndex!].trackers.append(tracker)
+            self.trackerCategories = Storage.trackerCategories
+            addNewTrackerViewController.dismiss(animated: true)
+        }
+        present(addNewTrackerViewController, animated: true)
     }
     
     private func dateTapped() {
@@ -94,11 +104,11 @@ class TrackersMainViewController: UIViewController {
 extension TrackersMainViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return trackerCategories.count
+        return visibleTrackerCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return trackerCategories[section].trackers.count
+        return visibleTrackerCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -107,7 +117,7 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             for: indexPath
         )
         guard let trackerCell = cell as? TrackerCollectionViewCell else { return cell }
-        trackerCell.configureWith(model: trackerCategories[indexPath.section].trackers[indexPath.item])
+        trackerCell.configureWith(model: visibleTrackerCategories[indexPath.section].trackers[indexPath.item])
         trackerCell.doneButtonAction = {
             // action for button
         }
@@ -127,7 +137,7 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         else {
             return supplementaryView
         }
-        headerView.titleLabel.text = trackerCategories[indexPath.section].name
+        headerView.titleLabel.text = visibleTrackerCategories[indexPath.section].name
         return headerView
     }
 }

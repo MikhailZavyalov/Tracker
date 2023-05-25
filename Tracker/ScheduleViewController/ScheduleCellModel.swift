@@ -1,6 +1,6 @@
 import UIKit
 
 struct ScheduleCellModel {
-    let title: String
+    let dayOfWeek: Tracker.WeekDay
     var switchValue: Bool
 }

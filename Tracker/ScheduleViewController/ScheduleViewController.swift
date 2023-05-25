@@ -2,30 +2,24 @@ import UIKit
 import SwiftUI
 
 final class ScheduleViewController: UIViewController {
-    private let weekDays: [ScheduleCellModel] = [
-        ScheduleCellModel(title: "Понедельник", switchValue: false),
-        ScheduleCellModel(title: "Вторник", switchValue: false),
-        ScheduleCellModel(title: "Среда", switchValue: false),
-        ScheduleCellModel(title: "Четверг", switchValue: false),
-        ScheduleCellModel(title: "Пятница", switchValue: false),
-        ScheduleCellModel(title: "Суббота", switchValue: false),
-        ScheduleCellModel(title: "Воскресенье", switchValue: false)
-    ]
+    var onUserDidSelectSchedule: ((Set<Tracker.WeekDay>) -> Void)?
     
-    let scheduleLable: UILabel = {
-       let label = UILabel()
+    private var weekDays: [ScheduleCellModel]
+    
+    let scheduleLabel: UILabel = {
+        let label = UILabel()
         label.text = "Расписание"
         return label
     }()
     
     let scheduleTableView: UITableView = {
-       let tableView = UITableView()
+        let tableView = UITableView()
         tableView.layer.cornerRadius = 20
         return tableView
     }()
     
     let scheduleDoneButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.backgroundColor = .black
         button.layer.cornerRadius = 20
         button.heightAnchor.constraint(equalToConstant: 80).isActive = true
@@ -33,10 +27,20 @@ final class ScheduleViewController: UIViewController {
         return button
     }()
     
+    init(enabledWeekDays: Set<Tracker.WeekDay> = Set()) {
+        weekDays = Tracker.WeekDay.allCases.map {
+            ScheduleCellModel(dayOfWeek: $0, switchValue: enabledWeekDays.contains($0))
+        }
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         scheduleTableView.dataSource = self
-        scheduleTableView.delegate = self
         scheduleTableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseID)
         scheduleDoneButton.addTarget(self, action: #selector(scheduleDoneButtonTapped), for: .touchUpInside)
         view.backgroundColor = .white
@@ -44,8 +48,8 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        view.addSubview(scheduleLable)
-        scheduleLable.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scheduleLabel)
+        scheduleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(scheduleTableView)
         scheduleTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,9 +58,9 @@ final class ScheduleViewController: UIViewController {
         scheduleDoneButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scheduleLable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            scheduleLable.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            scheduleTableView.topAnchor.constraint(equalTo: scheduleLable.bottomAnchor, constant: 30),
+            scheduleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            scheduleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            scheduleTableView.topAnchor.constraint(equalTo: scheduleLabel.bottomAnchor, constant: 30),
             scheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             scheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             scheduleTableView.bottomAnchor.constraint(equalTo: scheduleDoneButton.topAnchor, constant: -20),
@@ -67,7 +71,13 @@ final class ScheduleViewController: UIViewController {
     }
     
     @objc private func scheduleDoneButtonTapped() {
-        dismiss(animated: true)
+        let enabledDays = weekDays.filter {
+            $0.switchValue
+        }.map {
+            $0.dayOfWeek
+        }
+        
+        onUserDidSelectSchedule?(Set(enabledDays))
     }
 }
 
@@ -80,19 +90,18 @@ extension ScheduleViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseID, for: indexPath)
         guard let oneDayCell = cell as? ScheduleTableViewCell else { return cell }
         oneDayCell.configure(with: weekDays[indexPath.row])
+        oneDayCell.onValueChanged = { [self] switchValue in
+            weekDays[indexPath.row].switchValue = switchValue
+        }
         return oneDayCell
     }
 }
 
-extension ScheduleViewController: UITableViewDelegate {
-    
-}
-
 struct ScheduleViewController_Previews: PreviewProvider {
-  static var previews: some View {
-    let vc = ScheduleViewController()
-      
-    return UIViewRepresented(makeUIView: { _ in vc.view })
-  }
+    static var previews: some View {
+        let vc = ScheduleViewController()
+        
+        return UIViewRepresented(makeUIView: { _ in vc.view })
+    }
 }
 

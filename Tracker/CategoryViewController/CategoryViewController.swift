@@ -80,6 +80,12 @@ final class CategoryViewController: UIViewController {
                 self.allCategories[i].isSelected = false
             }
             
+            if let existingCategoryIndex = self.allCategories.firstIndex(where: { $0.title == categoryTitle }) {
+                self.allCategories[existingCategoryIndex].isSelected = true
+                self.categoriesTableView.reloadData()
+                return
+            }
+            
             self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
             Storage.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
             self.categoriesTableView.reloadData()

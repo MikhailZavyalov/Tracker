@@ -20,6 +20,7 @@ final class ScheduleTableViewCell: UITableViewCell {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(uiSwitch)
         uiSwitch.translatesAutoresizingMaskIntoConstraints = false
+        uiSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
         contentView.backgroundColor = .lightGray
         contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         
@@ -31,7 +32,7 @@ final class ScheduleTableViewCell: UITableViewCell {
     }
     
     func configure(with model: ScheduleCellModel) {
-        titleLabel.text = model.title
+        titleLabel.text = model.dayOfWeek.fullName
         uiSwitch.isOn = model.switchValue
     }
     

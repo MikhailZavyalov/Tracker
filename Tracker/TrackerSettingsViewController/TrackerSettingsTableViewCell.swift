@@ -5,6 +5,7 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
     
     private let subTitleLabel: UILabel = {
         let subTitleLabel = UILabel()
+        subTitleLabel.textColor = .black
         return subTitleLabel
     }()
     
@@ -16,11 +17,6 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.addSubview(titleLabel)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(subTitleLabel)
-        subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(arrowImageView)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
@@ -35,14 +31,24 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
     
     func configure(with model: TrackerSettingsCellModel) {
         titleLabel.text = model.title
-        
+        subTitleLabel.text = model.subTitle
+        subTitleLabel.isHidden = model.subTitle == nil || model.subTitle?.isEmpty == true
     }
     
     private func setupConstraints() {
+        let titleAndSubtitleStackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel])
+        contentView.addSubview(titleAndSubtitleStackView)
+        titleAndSubtitleStackView.axis = .vertical
+        titleAndSubtitleStackView.spacing = 0
+        titleAndSubtitleStackView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+
         let constraints = [
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleAndSubtitleStackView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor),
+            titleAndSubtitleStackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+            titleAndSubtitleStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleAndSubtitleStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             arrowImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             arrowImageView.widthAnchor.constraint(equalToConstant: 30),

@@ -63,6 +63,5 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         titleLabel.text = model.title
         colorView.backgroundColor = model.color.uiColor
         emojiLabel.text = model.emoji
-        dateLabel.text = model.dateLabel
     }
 }
