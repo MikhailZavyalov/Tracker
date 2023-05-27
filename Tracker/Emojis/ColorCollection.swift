@@ -1,15 +1,7 @@
 import UIKit
 
-class EmojisCollection: UIViewController {
-    let emojisArray = [
-        "🍇", "🍈", "🍉", "🍊", "🍋", "🍌",
-        "🍍", "🥭", "🍎", "🍏", "🍐", "🍒",
-        "🍓", "🫐", "🥝", "🍅", "🫒", "🥥"
-    ]
-    
-    var emojis: [String] = []
-    
-    let colorsArray: [UIColor] = [
+class ColorCollection: UIViewController {
+    let colorsForHabit: [UIColor] = [
         .red, .green, .blue, .systemPink, .yellow, .purple,
         .orange, .gray
     ]
@@ -21,7 +13,7 @@ class EmojisCollection: UIViewController {
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout()
         )
-        collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
+        collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
         return collectionView
     }()
     
@@ -31,6 +23,17 @@ class EmojisCollection: UIViewController {
         setupConstraints()
         collectionView.dataSource = self
         collectionView.delegate = self
+    }
+    
+    @objc
+    private func addNextEmoji() {
+        guard colorsForHabit.count < colorsForHabit.count else { return }
+        
+        var nextColorIndex = colorsForHabit.count
+        colors.append(colors[nextColorIndex])
+        collectionView.performBatchUpdates {
+            collectionView.insertItems(at: [IndexPath(item: nextColorIndex, section: 0)])
+        }
     }
     
     func setupConstraints() {
@@ -47,9 +50,9 @@ class EmojisCollection: UIViewController {
     }
 }
 
-extension EmojisCollection: UICollectionViewDataSource {
+extension ColorCollection: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return emojisArray.count
+        return colorsForHabit.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -57,16 +60,16 @@ extension EmojisCollection: UICollectionViewDataSource {
             withReuseIdentifier: "emojiCell",
             for: indexPath) as? EmojiAndColorCollectionViewCell
         
-        cell?.labelView.text = emojisArray[indexPath.row]
+        cell?.labelView.backgroundColor = colorsForHabit[indexPath.row]
         return cell!
     }
 }
 
-extension EmojisCollection: UICollectionViewDelegate {
+extension ColorCollection: UICollectionViewDelegate {
     
 }
 
-extension EmojisCollection: UICollectionViewDelegateFlowLayout {
+extension ColorCollection: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.width / 3, height: 60)
     }

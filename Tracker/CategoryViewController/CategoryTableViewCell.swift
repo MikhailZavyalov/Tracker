@@ -17,7 +17,7 @@ final class CategoryTableViewCell: UITableViewCell {
         contentView.backgroundColor = .lightGray
         contentView.addSubview(accessoryImageView)
         accessoryImageView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         setupConstraints()
     }
@@ -35,8 +35,8 @@ final class CategoryTableViewCell: UITableViewCell {
         let constraints = [
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            accessoryImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            accessoryImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             accessoryImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             accessoryImageView.widthAnchor.constraint(equalToConstant: 30),
             accessoryImageView.heightAnchor.constraint(equalToConstant: 30),

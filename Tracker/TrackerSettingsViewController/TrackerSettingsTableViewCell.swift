@@ -11,7 +11,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
     
     private let arrowImageView: UIImageView = {
         let arrowImageView = UIImageView()
-        arrowImageView.image = .checkmark
+        arrowImageView.image = UIImage(systemName: "chevron.right")
+        arrowImageView.tintColor = .black
         return arrowImageView
     }()
     
@@ -19,7 +20,7 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(arrowImageView)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         contentView.backgroundColor = .lightGray
 
         setupConstraints()
@@ -51,8 +52,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
             titleAndSubtitleStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             arrowImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            arrowImageView.widthAnchor.constraint(equalToConstant: 30),
-            arrowImageView.heightAnchor.constraint(equalToConstant: 30),
+            arrowImageView.widthAnchor.constraint(equalToConstant: 10),
+            arrowImageView.heightAnchor.constraint(equalToConstant: 20),
         ]
         
         constraints.forEach {

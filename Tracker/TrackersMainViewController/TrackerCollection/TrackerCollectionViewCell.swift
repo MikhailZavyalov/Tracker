@@ -25,11 +25,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         contentView.addSubview(dateLabel)
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.text = "1 day"
         
         contentView.addSubview(doneButton)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.setTitle("✅", for: .normal)
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -59,9 +58,15 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureWith(model: Tracker) {
+    func configureWith(model: TrackerCollectionCellModel) {
         titleLabel.text = model.title
-        colorView.backgroundColor = model.color.uiColor
+        colorView.backgroundColor = model.color
         emojiLabel.text = model.emoji
+        dateLabel.text = "\(model.remainingDays) дней"
+        doneButton.setTitle(model.isCompleted ? "✅" : "❌", for: .normal)
+    }
+    
+    @objc private func doneButtonTapped() {
+        doneButtonAction?()
     }
 }

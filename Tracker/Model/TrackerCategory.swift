@@ -1,6 +1,6 @@
 import Foundation
 
-struct TrackerCategory: Codable {
+struct TrackerCategory: Codable, Equatable {
     let name: String
     var trackers: [Tracker]
 }

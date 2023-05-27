@@ -2,9 +2,37 @@ import UIKit
 import SwiftUI
 
 class TrackersMainViewController: UIViewController {
+    fileprivate struct Filters {
+        var date: Date
+        var searchText: String?
+    }
+    
+    private var trackerRecords: [TrackerRecord] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    private var currentFilters = Filters(date: Date()) {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    private var trackerCategories: [TrackerCategory] = [] {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    private var visibleTrackerCategories: [TrackerCategory] {
+        trackerCategories.filter { !$0.visibleTrackers(using: currentFilters).isEmpty }
+    }
+    
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
     private let geometricParams = GeometricParams(cellCount: 2, leftInset: 10, rightInset: 10, cellSpacing: 10)
-    private let colors: [UIColor] = [.red, .blue, .green, .yellow]
+        
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
@@ -15,29 +43,21 @@ class TrackersMainViewController: UIViewController {
     
     private let uiSearchTextField: UISearchTextField = {
         let uiSearchTextField = UISearchTextField()
-        //        uiSearchTextFiel.delegate = UITextFieldDelegate
         return uiSearchTextField
     }()
     
-    private var trackerCategories: [TrackerCategory] = [] {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
-    
-    private var visibleTrackerCategories: [TrackerCategory] {
-        trackerCategories.filter { !$0.trackers.isEmpty }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        trackerCategories = Storage.trackerCategories
+        trackerRecords = Storage.trackerRecords
+        
         view.backgroundColor = .white
         title = "Трекеры"
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
         collectionView.dataSource = self
         collectionView.delegate = self
-        trackerCategories = Storage.trackerCategories
+        uiSearchTextField.addTarget(self, action: #selector(searchTextChanged), for: .editingChanged)
         
         navBarConfig()
         setupConstraints()
@@ -59,10 +79,10 @@ class TrackersMainViewController: UIViewController {
         view.addSubview(uiSearchTextField)
         uiSearchTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            uiSearchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            uiSearchTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            uiSearchTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            uiSearchTextField.heightAnchor.constraint(equalToConstant: 50)
+            uiSearchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            uiSearchTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            uiSearchTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            uiSearchTextField.heightAnchor.constraint(equalToConstant: 60)
         ])
         uiSearchTextField.placeholder = "Поиск"
         
@@ -80,24 +100,29 @@ class TrackersMainViewController: UIViewController {
     private func plusTapped() {
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.onNewTrackerCreated = { tracker in
-            let categoryIndex = Storage.trackerCategories.firstIndex { category in
+            guard let categoryIndex = Storage.trackerCategories.firstIndex(where: { category in
                 category.name == tracker.categoryTitle
+            }) else {
+                return
             }
-            // FIXME: - убрать forceunwrap
-            Storage.trackerCategories[categoryIndex!].trackers.append(tracker)
+            Storage.trackerCategories[categoryIndex].trackers.append(tracker)
             self.trackerCategories = Storage.trackerCategories
             addNewTrackerViewController.dismiss(animated: true)
         }
         present(addNewTrackerViewController, animated: true)
     }
     
-    private func dateTapped() {
-        datePicker.isHidden.toggle()
+    @objc
+    private func dateChanged() {
+        currentFilters.date = datePicker.date
     }
     
     @objc
-    private func dateChanged() {
-        print(datePicker.date)
+    private func searchTextChanged() {
+        currentFilters.searchText = uiSearchTextField.text
+        if uiSearchTextField.text == "" {
+            currentFilters.searchText = nil
+        }
     }
 }
 
@@ -108,7 +133,7 @@ extension TrackersMainViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleTrackerCategories[section].trackers.count
+        return visibleTrackerCategories[section].visibleTrackers(using: currentFilters).count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -116,16 +141,31 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             withReuseIdentifier: TrackerCollectionViewCell.reuseID,
             for: indexPath
         )
-        guard let trackerCell = cell as? TrackerCollectionViewCell else { return cell }
-        trackerCell.configureWith(model: visibleTrackerCategories[indexPath.section].trackers[indexPath.item])
-        trackerCell.doneButtonAction = {
-            // action for button
+        guard let trackerCell = cell as? TrackerCollectionViewCell else {
+            return cell
+        }
+        let tracker = visibleTrackerCategories[indexPath.section].visibleTrackers(using: currentFilters)[indexPath.item]
+        
+        let model = TrackerCollectionCellModel(
+            tracker: tracker,
+            trackerRecords: trackerRecords,
+            date: currentFilters.date
+        )
+        
+        trackerCell.configureWith(model: model)
+        
+        trackerCell.doneButtonAction = { [self] in
+            guard Calendar.current.isDateInToday(currentFilters.date) else {
+                return
+            }
+            let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
+            guard !trackerRecords.contains(record) else { return }
+            Storage.trackerRecords.append(record)
+            trackerRecords = Storage.trackerRecords
         }
         return trackerCell
     }
-    
-    
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
@@ -140,10 +180,6 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         headerView.titleLabel.text = visibleTrackerCategories[indexPath.section].name
         return headerView
     }
-}
-
-extension TrackersMainViewController: UICollectionViewDelegate {
-    
 }
 
 extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
@@ -177,6 +213,18 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+private extension TrackerCategory {
+    func visibleTrackers(using filters: TrackersMainViewController.Filters) -> [Tracker] {
+        let result = trackers.filter { tracker in
+            let weekDay = filters.date.weekDay
+            let containsWeekDay = true //weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
+            let containsText = filters.searchText == nil ? true : tracker.title.contains(filters.searchText!)
+            return containsWeekDay && containsText
+        }
+        return result
+    }
+}
+
 struct TrackersMainViewController_Previews: PreviewProvider {
   static var previews: some View {
     let vc = TrackersMainViewController()
@@ -184,4 +232,3 @@ struct TrackersMainViewController_Previews: PreviewProvider {
     return UIViewRepresented(makeUIView: { _ in vc.view })
   }
 }
-

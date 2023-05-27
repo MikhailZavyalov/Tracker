@@ -10,9 +10,9 @@ final class TrackerSettingsViewController: UIViewController {
         }
     }
     
-    private let emojisForHabit = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌",
-                           "🍍", "🥭", "🍎", "🍏", "🍐", "🍒",
-                           "🍓", "🫐", "🥝", "🍅", "🫒", "🥥"
+    private let colorsForHabit: [UIColor] = [
+        .red, .green, .blue, .systemPink, .yellow, .purple,
+        .orange, .gray
     ]
     
     private var habitTypeButtons: [TrackerSettingsCellModel] = [
@@ -31,18 +31,27 @@ final class TrackerSettingsViewController: UIViewController {
         let field = UITextField.textFieldWithInsets(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
         field.translatesAutoresizingMaskIntoConstraints = false
         field.backgroundColor = .lightGray
-        field.layer.cornerRadius = 20
+        field.layer.cornerRadius = 10
+        field.heightAnchor.constraint(equalToConstant: 60).isActive = true
         field.placeholder = "Введите название трекера"
         return field
     }()
     
     private let categoryAndScheduleTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 20
+        tableView.layer.cornerRadius = 10
         return tableView
     }()
     
     private let emojisCollectionView = {
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout()
+        )
+        return collectionView
+    }()
+    
+    private let colorsCollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout()
@@ -55,8 +64,8 @@ final class TrackerSettingsViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Отменить", for: .normal)
         button.backgroundColor = .black
-        button.layer.cornerRadius = 20
-        button.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        button.layer.cornerRadius = 10
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }()
     
@@ -65,8 +74,8 @@ final class TrackerSettingsViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Cоздать", for: .normal)
         button.backgroundColor = .black
-        button.layer.cornerRadius = 20
-        button.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        button.layer.cornerRadius = 10
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }()
     
@@ -80,9 +89,12 @@ final class TrackerSettingsViewController: UIViewController {
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
         categoryAndScheduleTableView.register(TrackerSettingsTableViewCell.self, forCellReuseIdentifier: TrackerSettingsTableViewCell.reuseID)
-        emojisCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
+        emojisCollectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
         emojisCollectionView.dataSource = self
         emojisCollectionView.delegate = self
+        colorsCollectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "colorCell")
+        colorsCollectionView.dataSource = self
+        colorsCollectionView.delegate = self
         view.backgroundColor = .white
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -129,10 +141,10 @@ final class TrackerSettingsViewController: UIViewController {
             categoryAndScheduleTableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 30),
             categoryAndScheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             categoryAndScheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            categoryAndScheduleTableView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor, constant: -300),
-            emojisCollectionView.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 0),
+            categoryAndScheduleTableView.heightAnchor.constraint(equalToConstant: 120),
+            emojisCollectionView.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 30),
             emojisCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            emojisCollectionView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor, constant: -20),
+            emojisCollectionView.heightAnchor.constraint(equalToConstant: 120),
             emojisCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
@@ -208,16 +220,20 @@ extension TrackerSettingsViewController: UITableViewDelegate {
 }
 
 extension TrackerSettingsViewController: UICollectionViewDataSource {
+//    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        return 2
+//    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return emojisForHabit.count
+        return EmojisCollection().emojisArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "emojiCell",
-            for: indexPath) as? EmojiCollectionViewCell
+            for: indexPath) as? EmojiAndColorCollectionViewCell
         
-        cell?.emogiLabelView.text = emojisForHabit[indexPath.row]
+        cell?.labelView.text = EmojisCollection().emojisArray[indexPath.row]
         return cell!
     }
 }

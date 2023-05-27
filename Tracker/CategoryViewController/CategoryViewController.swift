@@ -17,7 +17,7 @@ final class CategoryViewController: UIViewController {
     
     let categoriesTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 30
+        tableView.layer.cornerRadius = 10
         
         return tableView
     }()
@@ -27,8 +27,8 @@ final class CategoryViewController: UIViewController {
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .black
-        button.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        button.layer.cornerRadius = 20
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.layer.cornerRadius = 10
         return button
     }()
     

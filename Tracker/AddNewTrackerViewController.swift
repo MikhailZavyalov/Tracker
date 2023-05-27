@@ -35,30 +35,31 @@ final class AddNewTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        constConfig()
         view.backgroundColor = .white
         habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
         irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)
+        
+        setupConstraints()
     }
     
-    private func constConfig() {
+    private func setupConstraints() {
         view.addSubview(addNewTrackerViewLabel)
         view.addSubview(habitButton)
         view.addSubview(irregularEventButton)
         
         NSLayoutConstraint.activate([
             addNewTrackerViewLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            addNewTrackerViewLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            addNewTrackerViewLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             habitButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             habitButton.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             habitButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             habitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            habitButton.heightAnchor.constraint(equalToConstant: 50),
+            habitButton.heightAnchor.constraint(equalToConstant: 60),
             irregularEventButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             irregularEventButton.topAnchor.constraint(equalTo: habitButton.bottomAnchor, constant: 10),
             irregularEventButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             irregularEventButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            irregularEventButton.heightAnchor.constraint(equalToConstant: 50)
+            irregularEventButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     

@@ -21,7 +21,7 @@ final class StatisticsViewController: UIViewController {
         NSLayoutConstraint.activate([
             statisticsVCLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             statisticsVCLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            statisticsVCLabel.heightAnchor.constraint(equalToConstant: 50),
+            statisticsVCLabel.heightAnchor.constraint(equalToConstant: 60),
             statisticsVCLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 120),
         ])
     }

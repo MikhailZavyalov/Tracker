@@ -14,15 +14,15 @@ final class ScheduleViewController: UIViewController {
     
     let scheduleTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 20
+        tableView.layer.cornerRadius = 10
         return tableView
     }()
     
     let scheduleDoneButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .black
-        button.layer.cornerRadius = 20
-        button.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        button.layer.cornerRadius = 10
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.setTitle("Готово", for: .normal)
         return button
     }()
@@ -63,7 +63,7 @@ final class ScheduleViewController: UIViewController {
             scheduleTableView.topAnchor.constraint(equalTo: scheduleLabel.bottomAnchor, constant: 30),
             scheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             scheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            scheduleTableView.bottomAnchor.constraint(equalTo: scheduleDoneButton.topAnchor, constant: -20),
+            scheduleTableView.bottomAnchor.constraint(equalTo: scheduleDoneButton.topAnchor, constant: -35),
             scheduleDoneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             scheduleDoneButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             scheduleDoneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),

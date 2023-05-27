@@ -46,9 +46,9 @@ final class ScheduleTableViewCell: UITableViewCell {
         let constraints = [
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             uiSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            uiSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
+            uiSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
         ]
         
         constraints.forEach {
