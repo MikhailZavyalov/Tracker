@@ -21,7 +21,7 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         contentView.addSubview(arrowImageView)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        contentView.backgroundColor = .lightGray
+        contentView.backgroundColor = UIColor(named: "Background [day]")
 
         setupConstraints()
     }

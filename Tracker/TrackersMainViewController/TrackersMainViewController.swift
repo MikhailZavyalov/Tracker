@@ -9,19 +9,19 @@ class TrackersMainViewController: UIViewController {
     
     private var trackerRecords: [TrackerRecord] = [] {
         didSet {
-            collectionView.reloadData()
+            updateUI()
         }
     }
     
     private var currentFilters = Filters(date: Date()) {
         didSet {
-            collectionView.reloadData()
+            updateUI()
         }
     }
     
     private var trackerCategories: [TrackerCategory] = [] {
         didSet {
-            collectionView.reloadData()
+            updateUI()
         }
     }
     
@@ -46,12 +46,26 @@ class TrackersMainViewController: UIViewController {
         return uiSearchTextField
     }()
     
+    var trackersCollectionIsEmptyImage: UIImageView = {
+        let image = UIImage(named: "trackersIsEmptyLogo")!
+        var imageView = UIImageView(image: image)
+        return imageView
+    }()
+    
+    var trackersCollectionIsEmptyLabel: UILabel = {
+        var label = UILabel()
+        label.text = "Что будем отслеживать?"
+        label.font = UIFont(name: "SF Pro", size: 12)
+        label.textAlignment = .center
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         trackerCategories = Storage.trackerCategories
         trackerRecords = Storage.trackerRecords
         
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.whiteDay
         title = "Трекеры"
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
@@ -61,6 +75,13 @@ class TrackersMainViewController: UIViewController {
         
         navBarConfig()
         setupConstraints()
+        updateUI()
+    }
+    
+    private func updateUI() {
+        collectionView.reloadData()
+        trackersCollectionIsEmptyImage.isHidden = !visibleTrackerCategories.isEmpty
+        trackersCollectionIsEmptyLabel.isHidden = !visibleTrackerCategories.isEmpty
     }
     
     private func navBarConfig() {
@@ -71,28 +92,46 @@ class TrackersMainViewController: UIViewController {
             
             let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusTapped))
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
-            navBar.backgroundColor = .white
+            navBar.topItem?.leftBarButtonItem?.tintColor = Colors.blackDay
+            navBar.backgroundColor = Colors.whiteDay
         }
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func setupConstraints() {
         view.addSubview(uiSearchTextField)
         uiSearchTextField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            uiSearchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            uiSearchTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            uiSearchTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            uiSearchTextField.heightAnchor.constraint(equalToConstant: 60)
+            uiSearchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7),
+            uiSearchTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            uiSearchTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            uiSearchTextField.heightAnchor.constraint(equalToConstant: 36)
         ])
         uiSearchTextField.placeholder = "Поиск"
         
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: uiSearchTextField.bottomAnchor, constant: 30),
+            collectionView.topAnchor.constraint(equalTo: uiSearchTextField.bottomAnchor, constant: 24),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+        ])
+        
+        view.addSubview(trackersCollectionIsEmptyImage)
+        trackersCollectionIsEmptyImage.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(trackersCollectionIsEmptyLabel)
+        trackersCollectionIsEmptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            trackersCollectionIsEmptyImage.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            trackersCollectionIsEmptyImage.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor),
+            trackersCollectionIsEmptyImage.heightAnchor.constraint(equalToConstant: 80),
+            trackersCollectionIsEmptyImage.widthAnchor.constraint(equalToConstant: 80),
+            trackersCollectionIsEmptyLabel.topAnchor.constraint(equalTo: trackersCollectionIsEmptyImage.bottomAnchor, constant: 8),
+            trackersCollectionIsEmptyLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            trackersCollectionIsEmptyLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            trackersCollectionIsEmptyLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
         ])
     }
     
@@ -149,18 +188,23 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         let model = TrackerCollectionCellModel(
             tracker: tracker,
             trackerRecords: trackerRecords,
-            date: currentFilters.date
+            chosenDate: currentFilters.date
         )
         
         trackerCell.configureWith(model: model)
         
         trackerCell.doneButtonAction = { [self] in
-            guard Calendar.current.isDateInToday(currentFilters.date) else {
+            guard Calendar.current.isDateInToday(currentFilters.date)
+                    && tracker.daysOfWeek.contains(Date().weekDay!)
+            else {
                 return
             }
             let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
-            guard !trackerRecords.contains(record) else { return }
-            Storage.trackerRecords.append(record)
+            if trackerRecords.contains(record) {
+                Storage.trackerRecords.removeAll { $0 == record }
+            } else {
+                Storage.trackerRecords.append(record)
+            }
             trackerRecords = Storage.trackerRecords
         }
         return trackerCell
@@ -217,9 +261,10 @@ private extension TrackerCategory {
     func visibleTrackers(using filters: TrackersMainViewController.Filters) -> [Tracker] {
         let result = trackers.filter { tracker in
             let weekDay = filters.date.weekDay
-            let containsWeekDay = true //weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
+            let containsWeekDay = weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
+            let isToday = Calendar.current.isDateInToday(filters.date)
             let containsText = filters.searchText == nil ? true : tracker.title.contains(filters.searchText!)
-            return containsWeekDay && containsText
+            return (containsWeekDay || isToday) && containsText
         }
         return result
     }

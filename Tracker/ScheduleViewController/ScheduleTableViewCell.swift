@@ -21,7 +21,7 @@ final class ScheduleTableViewCell: UITableViewCell {
         contentView.addSubview(uiSwitch)
         uiSwitch.translatesAutoresizingMaskIntoConstraints = false
         uiSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
-        contentView.backgroundColor = .lightGray
+        contentView.backgroundColor = Colors.lightGray
         contentView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         
         setupConstraints()

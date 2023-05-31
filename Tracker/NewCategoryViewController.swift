@@ -82,10 +82,10 @@ final class NewCategoryViewController: UIViewController {
     
     private func updateNewCategoryDoneButtonState() {
         if isTextValid() {
-            newCategoryDoneButton.backgroundColor = .black
+            newCategoryDoneButton.backgroundColor = UIColor(named: "Black [day]")
             newCategoryDoneButton.isUserInteractionEnabled = true
         } else {
-            newCategoryDoneButton.backgroundColor = .lightGray
+            newCategoryDoneButton.backgroundColor = UIColor(named: "Light Gray")
             newCategoryDoneButton.isUserInteractionEnabled = false
         }
     }

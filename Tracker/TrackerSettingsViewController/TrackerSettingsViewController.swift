@@ -2,6 +2,7 @@ import UIKit
 import SwiftUI
 
 final class TrackerSettingsViewController: UIViewController {
+    let trackersMainViewController = TrackersMainViewController()
     var onNewTrackerCreated: ((Tracker) -> Void)?
     
     private var currentSettings: TrackerSettings = .empty {
@@ -30,7 +31,7 @@ final class TrackerSettingsViewController: UIViewController {
     private let textField: UITextField = {
         let field = UITextField.textFieldWithInsets(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
         field.translatesAutoresizingMaskIntoConstraints = false
-        field.backgroundColor = .lightGray
+        field.backgroundColor = UIColor(named: "Background [day]")
         field.layer.cornerRadius = 10
         field.heightAnchor.constraint(equalToConstant: 60).isActive = true
         field.placeholder = "Введите название трекера"
@@ -63,9 +64,12 @@ final class TrackerSettingsViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Отменить", for: .normal)
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 10
+        button.setTitleColor(UIColor(named: "Red"), for: .normal)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(named: "Red")?.cgColor
         return button
     }()
     
@@ -73,8 +77,8 @@ final class TrackerSettingsViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Cоздать", for: .normal)
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 10
+        button.backgroundColor = UIColor(named: "Black [day]")
+        button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }()
@@ -99,6 +103,7 @@ final class TrackerSettingsViewController: UIViewController {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingChanged)
+        textField.delegate = self
         
         setupConstraints()
     }
@@ -135,19 +140,19 @@ final class TrackerSettingsViewController: UIViewController {
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             label.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             textField.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
-            textField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            textField.heightAnchor.constraint(equalToConstant: 80),
-            textField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            textField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            textField.heightAnchor.constraint(equalToConstant: 75),
+            textField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             categoryAndScheduleTableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 30),
-            categoryAndScheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            categoryAndScheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            categoryAndScheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            categoryAndScheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             categoryAndScheduleTableView.heightAnchor.constraint(equalToConstant: 120),
             emojisCollectionView.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 30),
-            emojisCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            emojisCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             emojisCollectionView.heightAnchor.constraint(equalToConstant: 120),
-            emojisCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            emojisCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
     }
@@ -163,16 +168,18 @@ final class TrackerSettingsViewController: UIViewController {
     
     @objc private func textFieldValueChanged() {
         currentSettings.title = textField.text
+        updateUI()
     }
     
     private func updateUI() {
         if currentSettings.makeTracker() != nil {
-            createButton.backgroundColor = .black
+            createButton.backgroundColor = UIColor(named: "Black [day]")
             createButton.isUserInteractionEnabled = true
         } else {
-            createButton.backgroundColor = .lightGray
+            createButton.backgroundColor = UIColor(named: "Light Gray")
             createButton.isUserInteractionEnabled = false
         }
+//        textLimitHint.isHidden = textField.text?.count != 38
     }
 }
 
@@ -205,10 +212,14 @@ extension TrackerSettingsViewController: UITableViewDelegate {
             let scheduleViewController = ScheduleViewController(enabledWeekDays: currentSettings.daysOfWeek)
             scheduleViewController.onUserDidSelectSchedule = { [weak scheduleViewController] enabledDays in
                 self.currentSettings.daysOfWeek = enabledDays
-                self.habitTypeButtons[1].subTitle = enabledDays
-                    .map {
-                        $0.shortName
-                    }.joined(separator: ", ")
+                if enabledDays == Set(Tracker.WeekDay.allCases) {
+                    self.habitTypeButtons[1].subTitle = "Каждый день"
+                } else {
+                    self.habitTypeButtons[1].subTitle = enabledDays
+                        .map {
+                            $0.shortName
+                        }.joined(separator: ", ")
+                }
                 tableView.reloadData()
                 scheduleViewController?.dismiss(animated: true)
             }
@@ -220,9 +231,7 @@ extension TrackerSettingsViewController: UITableViewDelegate {
 }
 
 extension TrackerSettingsViewController: UICollectionViewDataSource {
-//    func numberOfSections(in collectionView: UICollectionView) -> Int {
-//        return 2
-//    }
+
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return EmojisCollection().emojisArray.count
@@ -249,6 +258,19 @@ extension TrackerSettingsViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(0)
+    }
+}
+
+extension TrackerSettingsViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let textFieldText = textField.text,
+            let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+                return false
+        }
+        let substringToReplace = textFieldText[rangeOfTextToReplace]
+        let count = textFieldText.count - substringToReplace.count + string.count
+        return count <= 38
     }
 }
 

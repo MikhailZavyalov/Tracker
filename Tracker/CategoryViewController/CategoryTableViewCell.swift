@@ -14,7 +14,7 @@ final class CategoryTableViewCell: UITableViewCell {
         
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.backgroundColor = .lightGray
+        contentView.backgroundColor = UIColor(named: "Light Gray")
         contentView.addSubview(accessoryImageView)
         accessoryImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true

@@ -7,7 +7,12 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private let colorView = UIView()
     private let emojiLabel = UILabel()
     private let dateLabel = UILabel()
-    private let doneButton = UIButton()
+    private let doneButton: UIButton = {
+       let button = UIButton()
+        button.backgroundColor = .green
+        button.layer.cornerRadius = 17
+        return button
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,8 +38,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
             colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            colorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -(contentView.frame.height * 1 / 3)),
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            colorView.heightAnchor.constraint(equalToConstant: 90),
+            colorView.widthAnchor.constraint(equalToConstant: 167),
             emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 10),
             emojiLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: 0),
             emojiLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -(contentView.frame.height * 3 / 4)),
@@ -47,10 +53,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -(contentView.frame.width / 2)),
             dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
             dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            doneButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 0),
-            doneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
-            doneButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-            doneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: contentView.frame.width / 2)
+            doneButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
+            doneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            doneButton.heightAnchor.constraint(equalToConstant: 34),
+            doneButton.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
     
@@ -63,7 +69,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         colorView.backgroundColor = model.color
         emojiLabel.text = model.emoji
         dateLabel.text = "\(model.remainingDays) дней"
-        doneButton.setTitle(model.isCompleted ? "✅" : "❌", for: .normal)
+        doneButton.setImage(model.isCompleted ? UIImage(named: "checkmark") : UIImage(named: "plus [black]"), for: .normal)
     }
     
     @objc private func doneButtonTapped() {

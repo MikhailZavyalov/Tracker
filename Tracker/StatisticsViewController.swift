@@ -6,13 +6,13 @@ final class StatisticsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Экран статистики"
-        label.textColor = .black
+        label.textColor = Colors.blackDay
         return label
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.whiteDay
         constrConf()
     }
     

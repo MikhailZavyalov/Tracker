@@ -9,8 +9,8 @@ final class CategoryViewController: UIViewController {
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Категория"
-        label.textColor = .black
-        label.backgroundColor = .white
+        label.textColor = UIColor(named: "Black [day]")
+        label.backgroundColor = UIColor(named: "White [day]")
         label.textAlignment = .center
         return label
     }()
@@ -25,8 +25,8 @@ final class CategoryViewController: UIViewController {
     let addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(UIColor(named: "White [day]"), for: .normal)
+        button.backgroundColor = UIColor(named: "Black [day]")
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.layer.cornerRadius = 10
         return button
@@ -34,6 +34,7 @@ final class CategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "White [day]")
         allCategories = Storage.trackerCategories.map {
             CategoryCellModel(title: $0.name, isSelected: false)
         }
@@ -42,7 +43,7 @@ final class CategoryViewController: UIViewController {
         categoriesTableView.delegate = self
         categoriesTableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseID)
         addCategoryButton.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "White [day]")
         
         setupConstraints()
     }
@@ -103,7 +104,7 @@ extension CategoryViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseID, for: indexPath)
         guard let settingsCell = cell as? CategoryTableViewCell else { return cell }
         settingsCell.configure(with: allCategories[indexPath.row])
-        settingsCell.backgroundColor = .lightGray
+        settingsCell.backgroundColor = UIColor(named: "Light Gray")
         return settingsCell
     }
 }
