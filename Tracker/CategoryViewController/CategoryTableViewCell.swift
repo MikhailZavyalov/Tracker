@@ -5,7 +5,7 @@ final class CategoryTableViewCell: UITableViewCell {
     
     private let accessoryImageView: UIImageView = {
         let accessoryImageView = UIImageView()
-        accessoryImageView.image = .checkmark
+        accessoryImageView.image = UIImage(named: "checkmark")
         return accessoryImageView
     }()
     
@@ -14,10 +14,10 @@ final class CategoryTableViewCell: UITableViewCell {
         
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.backgroundColor = UIColor(named: "Light Gray")
+        contentView.backgroundColor = Colors.backgroundDay
         contentView.addSubview(accessoryImageView)
         accessoryImageView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        contentView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
         setupConstraints()
     }
@@ -35,11 +35,11 @@ final class CategoryTableViewCell: UITableViewCell {
         let constraints = [
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            accessoryImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            accessoryImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20.7),
             accessoryImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            accessoryImageView.widthAnchor.constraint(equalToConstant: 30),
-            accessoryImageView.heightAnchor.constraint(equalToConstant: 30),
+            accessoryImageView.widthAnchor.constraint(equalToConstant: 14.3),
+            accessoryImageView.heightAnchor.constraint(equalToConstant: 14.19)
         ]
         
         constraints.forEach {

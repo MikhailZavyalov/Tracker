@@ -194,8 +194,9 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         trackerCell.configureWith(model: model)
         
         trackerCell.doneButtonAction = { [self] in
-            guard Calendar.current.isDateInToday(currentFilters.date)
-                    && tracker.daysOfWeek.contains(Date().weekDay!)
+            guard
+//            Calendar.current.isDateInToday(currentFilters.date)
+                     tracker.daysOfWeek.contains(datePicker.date.weekDay!)
             else {
                 return
             }

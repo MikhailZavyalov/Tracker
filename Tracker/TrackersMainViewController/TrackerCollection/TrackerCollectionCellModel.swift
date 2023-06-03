@@ -27,7 +27,7 @@ extension TrackerCollectionCellModel {
         var remainingDays = isCompleted ? 1 : 0
         var currentDate = isCompleted
         ? Calendar.current.date(byAdding: .day, value: 1, to: Date())!
-        : Date()
+        : chosenDate
         while !tracker.daysOfWeek.contains(currentDate.weekDay!) {
             remainingDays += 1
             currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!

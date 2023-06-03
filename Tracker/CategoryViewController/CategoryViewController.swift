@@ -9,7 +9,8 @@ final class CategoryViewController: UIViewController {
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Категория"
-        label.textColor = UIColor(named: "Black [day]")
+        label.font = UIFont(name: "SF Pro", size: 16)
+        label.textColor = Colors.blackDay
         label.backgroundColor = UIColor(named: "White [day]")
         label.textAlignment = .center
         return label
@@ -26,15 +27,16 @@ final class CategoryViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(UIColor(named: "White [day]"), for: .normal)
-        button.backgroundColor = UIColor(named: "Black [day]")
+        button.titleLabel?.font = UIFont(name: "SF Pro", size: 16)
+        button.backgroundColor = Colors.blackDay
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 16
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "White [day]")
+        view.backgroundColor = Colors.whiteDay
         allCategories = Storage.trackerCategories.map {
             CategoryCellModel(title: $0.name, isSelected: false)
         }
@@ -43,7 +45,6 @@ final class CategoryViewController: UIViewController {
         categoriesTableView.delegate = self
         categoriesTableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.reuseID)
         addCategoryButton.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
-        view.backgroundColor = UIColor(named: "White [day]")
         
         setupConstraints()
     }
@@ -60,13 +61,13 @@ final class CategoryViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            categoriesTableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
-            categoriesTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+            categoriesTableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 24),
+            categoriesTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             categoriesTableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -20),
-            categoriesTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            categoriesTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
+            addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
         ])
     }
@@ -104,7 +105,7 @@ extension CategoryViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseID, for: indexPath)
         guard let settingsCell = cell as? CategoryTableViewCell else { return cell }
         settingsCell.configure(with: allCategories[indexPath.row])
-        settingsCell.backgroundColor = UIColor(named: "Light Gray")
+        settingsCell.backgroundColor = Colors.backgroundDay
         return settingsCell
     }
 }

@@ -25,6 +25,7 @@ final class TrackerSettingsViewController: UIViewController {
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.text = "Новая привычка"
+        title.font = UIFont(name: "SF Pro", size: 16)
         return title
     }()
     
@@ -32,15 +33,16 @@ final class TrackerSettingsViewController: UIViewController {
         let field = UITextField.textFieldWithInsets(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
         field.translatesAutoresizingMaskIntoConstraints = false
         field.backgroundColor = UIColor(named: "Background [day]")
-        field.layer.cornerRadius = 10
+        field.layer.cornerRadius = 16
         field.heightAnchor.constraint(equalToConstant: 60).isActive = true
         field.placeholder = "Введите название трекера"
+        field.clearButtonMode = .whileEditing
         return field
     }()
     
     private let categoryAndScheduleTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 10
+        tableView.layer.cornerRadius = 16
         return tableView
     }()
     
@@ -77,7 +79,7 @@ final class TrackerSettingsViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Cоздать", for: .normal)
-        button.backgroundColor = UIColor(named: "Black [day]")
+        button.backgroundColor = Colors.blackDay
         button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
@@ -130,7 +132,7 @@ final class TrackerSettingsViewController: UIViewController {
         view.addSubview(buttonsStackView)
         buttonsStackView.axis = .horizontal
         buttonsStackView.distribution = .fillEqually
-        buttonsStackView.spacing = 10
+        buttonsStackView.spacing = 8
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
@@ -143,17 +145,17 @@ final class TrackerSettingsViewController: UIViewController {
             textField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
             textField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            categoryAndScheduleTableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 30),
+            categoryAndScheduleTableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             categoryAndScheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             categoryAndScheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            categoryAndScheduleTableView.heightAnchor.constraint(equalToConstant: 120),
+            categoryAndScheduleTableView.heightAnchor.constraint(equalToConstant: 150),
             emojisCollectionView.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 30),
             emojisCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            emojisCollectionView.heightAnchor.constraint(equalToConstant: 120),
+            emojisCollectionView.heightAnchor.constraint(equalToConstant: 150),
             emojisCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            buttonsStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
         ])
     }
     
@@ -173,10 +175,10 @@ final class TrackerSettingsViewController: UIViewController {
     
     private func updateUI() {
         if currentSettings.makeTracker() != nil {
-            createButton.backgroundColor = UIColor(named: "Black [day]")
+            createButton.backgroundColor = Colors.blackDay
             createButton.isUserInteractionEnabled = true
         } else {
-            createButton.backgroundColor = UIColor(named: "Light Gray")
+            createButton.backgroundColor = Colors.gray
             createButton.isUserInteractionEnabled = false
         }
 //        textLimitHint.isHidden = textField.text?.count != 38

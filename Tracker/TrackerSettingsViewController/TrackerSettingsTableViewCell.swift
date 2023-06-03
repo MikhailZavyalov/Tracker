@@ -1,18 +1,22 @@
 import UIKit
 
 final class TrackerSettingsTableViewCell: UITableViewCell {
-    private let titleLabel = UILabel()
+    private let titleLabel: UILabel = {
+       let title = UILabel()
+        title.font = UIFont(name: "SF Pro", size: 17)
+        return title
+    }()
     
     private let subTitleLabel: UILabel = {
         let subTitleLabel = UILabel()
-        subTitleLabel.textColor = .black
+        subTitleLabel.textColor = Colors.blackDay
+        subTitleLabel.font = UIFont(name: "SF Pro", size: 17)
         return subTitleLabel
     }()
     
     private let arrowImageView: UIImageView = {
         let arrowImageView = UIImageView()
-        arrowImageView.image = UIImage(systemName: "chevron.right")
-        arrowImageView.tintColor = .black
+        arrowImageView.image = UIImage(named: "icon.chevron")
         return arrowImageView
     }()
     
@@ -20,8 +24,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(arrowImageView)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        contentView.backgroundColor = UIColor(named: "Background [day]")
+        contentView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        contentView.backgroundColor = Colors.backgroundDay
 
         setupConstraints()
     }
@@ -52,8 +56,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
             titleAndSubtitleStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             arrowImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             arrowImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            arrowImageView.widthAnchor.constraint(equalToConstant: 10),
-            arrowImageView.heightAnchor.constraint(equalToConstant: 20),
+            arrowImageView.widthAnchor.constraint(equalToConstant: 7),
+            arrowImageView.heightAnchor.constraint(equalToConstant: 12),
         ]
         
         constraints.forEach {

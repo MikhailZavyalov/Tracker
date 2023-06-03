@@ -6,6 +6,7 @@ struct TrackerSettings {
     var emoji: String?
     var categoryTitle: String?
     var daysOfWeek: Set<Tracker.WeekDay>
+    var completedAllTheTime: Int?
     
     static let empty = TrackerSettings(daysOfWeek: Set())
     
@@ -27,7 +28,8 @@ struct TrackerSettings {
             title: title,
             emoji: emoji,
             categoryTitle: categoryTitle,
-            daysOfWeek: daysOfWeek
+            daysOfWeek: daysOfWeek,
+            completedAllTheTime: 0
         )
     }
 }

@@ -13,8 +13,8 @@ final class NewCategoryViewController: UIViewController {
     
     private let newCategoryTextField: UITextField = {
         let textField = UITextField.textFieldWithInsets(insets: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
-        textField.backgroundColor = .lightGray
-        textField.layer.cornerRadius = 20
+        textField.backgroundColor = Colors.backgroundDay
+        textField.layer.cornerRadius = 16
         textField.placeholder = "Введите название категории"
         return textField
     }()
@@ -24,8 +24,8 @@ final class NewCategoryViewController: UIViewController {
         button.backgroundColor = .black
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 20
-        button.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        button.layer.cornerRadius = 16
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }()
     
@@ -52,15 +52,15 @@ final class NewCategoryViewController: UIViewController {
         newCategoryDoneButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            newCategoryLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            newCategoryLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
             newCategoryLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            newCategoryTextField.topAnchor.constraint(equalTo: newCategoryLabel.bottomAnchor, constant: 40),
-            newCategoryTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            newCategoryTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            newCategoryTextField.heightAnchor.constraint(equalToConstant: 80),
+            newCategoryTextField.topAnchor.constraint(equalTo: newCategoryLabel.bottomAnchor, constant: 38),
+            newCategoryTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            newCategoryTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            newCategoryTextField.heightAnchor.constraint(equalToConstant: 75),
             newCategoryDoneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             newCategoryDoneButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            newCategoryDoneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            newCategoryDoneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
         ])
     }
     
@@ -82,10 +82,10 @@ final class NewCategoryViewController: UIViewController {
     
     private func updateNewCategoryDoneButtonState() {
         if isTextValid() {
-            newCategoryDoneButton.backgroundColor = UIColor(named: "Black [day]")
+            newCategoryDoneButton.backgroundColor = Colors.blackDay
             newCategoryDoneButton.isUserInteractionEnabled = true
         } else {
-            newCategoryDoneButton.backgroundColor = UIColor(named: "Light Gray")
+            newCategoryDoneButton.backgroundColor = Colors.gray
             newCategoryDoneButton.isUserInteractionEnabled = false
         }
     }
