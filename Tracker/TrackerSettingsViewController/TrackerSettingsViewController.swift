@@ -43,6 +43,7 @@ final class TrackerSettingsViewController: UIViewController {
     private let categoryAndScheduleTableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -90,7 +91,7 @@ final class TrackerSettingsViewController: UIViewController {
         
         // FIXME: - удалить, когда будет сделано emoji и colorPicker
         currentSettings.emoji = "🏆"
-        currentSettings.color = .init(uiColor: .green)
+        currentSettings.color = .init(uiColor: ColorSelection.colorSelection15!)
         
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
@@ -193,7 +194,7 @@ extension TrackerSettingsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TrackerSettingsTableViewCell.reuseID, for: indexPath)
         guard let settingsCell = cell as? TrackerSettingsTableViewCell else { return cell }
-        settingsCell.configure(with: habitTypeButtons[indexPath.row])
+        settingsCell.configure(with: habitTypeButtons[indexPath.row], isLast: indexPath.row == habitTypeButtons.count - 1)
         return settingsCell
     }
 }

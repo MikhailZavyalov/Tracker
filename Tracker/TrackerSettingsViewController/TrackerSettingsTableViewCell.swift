@@ -20,6 +20,14 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         return arrowImageView
     }()
     
+    private let separator: UIView = {
+        let separator = UIView()
+        separator.backgroundColor = UIColor.lightGray
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        return separator
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(arrowImageView)
@@ -34,10 +42,13 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with model: TrackerSettingsCellModel) {
+    func configure(with model: TrackerSettingsCellModel, isLast: Bool) {
         titleLabel.text = model.title
         subTitleLabel.text = model.subTitle
         subTitleLabel.isHidden = model.subTitle == nil || model.subTitle?.isEmpty == true
+        if isLast {
+            separator.isHidden = true
+        }
     }
     
     private func setupConstraints() {
@@ -48,6 +59,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         titleAndSubtitleStackView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(separator)
+        separator.translatesAutoresizingMaskIntoConstraints = false
 
         let constraints = [
             titleAndSubtitleStackView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor),
@@ -58,6 +71,9 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
             arrowImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             arrowImageView.widthAnchor.constraint(equalToConstant: 7),
             arrowImageView.heightAnchor.constraint(equalToConstant: 12),
+            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
         ]
         
         constraints.forEach {

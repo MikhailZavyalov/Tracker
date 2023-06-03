@@ -7,7 +7,6 @@ struct Tracker: Codable, Equatable {
     let emoji: String
     let categoryTitle: String
     let daysOfWeek: Set<WeekDay>
-    let completedAllTheTime: Int
     
     enum WeekDay: Codable, CaseIterable, Equatable {
         case monday

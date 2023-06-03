@@ -14,6 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         tabBarController.viewControllers = [trackersViewController, statisticsViewController]
         tabBarController.viewControllers?[0].tabBarItem.image = UIImage(named: "record.circle.fill")
         tabBarController.viewControllers?[1].tabBarItem.image = UIImage(named: "hare.fill")
+
         window = UIWindow(windowScene: scene)
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()

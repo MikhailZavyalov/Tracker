@@ -4,7 +4,11 @@ import SwiftUI
 final class CategoryViewController: UIViewController {
     var onUserDidSelectCategory: ((String) -> Void)?
     
-    private var allCategories: [CategoryCellModel] = []
+    private var allCategories: [CategoryCellModel] = [] {
+        didSet {
+            updateUI()
+        }
+    }
     
     private let label: UILabel = {
         let label = UILabel()
@@ -16,14 +20,13 @@ final class CategoryViewController: UIViewController {
         return label
     }()
     
-    let categoriesTableView: UITableView = {
+    private let categoriesTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 10
-        
+        tableView.separatorStyle = .none
         return tableView
     }()
     
-    let addCategoryButton: UIButton = {
+    private let addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(UIColor(named: "White [day]"), for: .normal)
@@ -32,6 +35,13 @@ final class CategoryViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.layer.cornerRadius = 16
         return button
+    }()
+    
+    private let emptyStateView: EmptyStateView = {
+        let view = EmptyStateView()
+        view.image = UIImage(named: "trackersIsEmptyLogo")
+        view.text = "Привычки и события можно объединить по смыслу"
+        return view
     }()
     
     override func viewDidLoad() {
@@ -49,7 +59,7 @@ final class CategoryViewController: UIViewController {
         setupConstraints()
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -58,6 +68,9 @@ final class CategoryViewController: UIViewController {
         
         view.addSubview(addCategoryButton)
         addCategoryButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(emptyStateView)
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -69,13 +82,22 @@ final class CategoryViewController: UIViewController {
             addCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            emptyStateView.centerXAnchor.constraint(equalTo: categoriesTableView.centerXAnchor),
+            emptyStateView.centerYAnchor.constraint(equalTo: categoriesTableView.centerYAnchor),
         ])
+    }
+    
+    private func updateUI() {
+        categoriesTableView.reloadData()
+        emptyStateView.isHidden = !allCategories.isEmpty
     }
     
     @objc func addCategory() {
         let viewController = NewCategoryViewController()
         viewController.onUserDidAddNewCategory = { [weak self] categoryTitle in
             guard let self = self else { return }
+            defer { self.updateUI() }
+            
             viewController.dismiss(animated: true)
             
             for i in 0..<self.allCategories.count {
@@ -84,13 +106,11 @@ final class CategoryViewController: UIViewController {
             
             if let existingCategoryIndex = self.allCategories.firstIndex(where: { $0.title == categoryTitle }) {
                 self.allCategories[existingCategoryIndex].isSelected = true
-                self.categoriesTableView.reloadData()
                 return
             }
             
             self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
             Storage.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
-            self.categoriesTableView.reloadData()
         }
         present(viewController, animated: true)
     }
@@ -104,8 +124,11 @@ extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.reuseID, for: indexPath)
         guard let settingsCell = cell as? CategoryTableViewCell else { return cell }
-        settingsCell.configure(with: allCategories[indexPath.row])
-        settingsCell.backgroundColor = Colors.backgroundDay
+        settingsCell.configure(
+            with: allCategories[indexPath.row],
+            isFirst: indexPath.row == 0,
+            isLast: indexPath.row == allCategories.count - 1
+        )
         return settingsCell
     }
 }

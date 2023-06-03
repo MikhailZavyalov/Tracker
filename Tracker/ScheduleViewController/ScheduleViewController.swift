@@ -16,6 +16,7 @@ final class ScheduleViewController: UIViewController {
     let scheduleTableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -59,6 +60,7 @@ final class ScheduleViewController: UIViewController {
         view.addSubview(scheduleDoneButton)
         scheduleDoneButton.translatesAutoresizingMaskIntoConstraints = false
         
+        
         NSLayoutConstraint.activate([
             scheduleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             scheduleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -91,7 +93,10 @@ extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseID, for: indexPath)
         guard let oneDayCell = cell as? ScheduleTableViewCell else { return cell }
-        oneDayCell.configure(with: weekDays[indexPath.row])
+        oneDayCell.configure(
+            with: weekDays[indexPath.row],
+            isFirst: indexPath.row == 0,
+            isLast: indexPath.row == weekDays.count - 1)
         oneDayCell.onValueChanged = { [self] switchValue in
             weekDays[indexPath.row].switchValue = switchValue
         }

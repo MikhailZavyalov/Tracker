@@ -4,7 +4,7 @@ struct TrackerCollectionCellModel {
     let color: UIColor
     let title: String
     let emoji: String
-    let remainingDays: Int
+    let daysCompleted: Int
     var isCompleted: Bool
 }
 
@@ -23,16 +23,12 @@ extension TrackerCollectionCellModel {
             }
         }
         self.isCompleted = isCompleted
-        print(isCompleted)
-        var remainingDays = isCompleted ? 1 : 0
-        var currentDate = isCompleted
-        ? Calendar.current.date(byAdding: .day, value: 1, to: Date())!
-        : chosenDate
-        while !tracker.daysOfWeek.contains(currentDate.weekDay!) {
-            remainingDays += 1
-            currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+        
+        var daysCompleted = 0
+        for record in trackerRecords {
+            guard record.trackerId == tracker.id else { continue }
+            daysCompleted += 1
         }
-        self.remainingDays = remainingDays
-        print(remainingDays)
+        self.daysCompleted = daysCompleted
     }
 }
