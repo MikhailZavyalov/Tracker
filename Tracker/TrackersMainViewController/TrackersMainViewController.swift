@@ -78,10 +78,27 @@ class TrackersMainViewController: UIViewController {
         return separator
     }()
     
+    private var observations: Set<NSKeyValueObservation> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        trackerCategories = Storage.shared.trackerCategories
-        trackerRecords = Storage.shared.trackerRecords
+        observations.insert(
+            CoreDataStorage.shared.observe(
+                \.trackerCategories,
+                 options: [.initial]
+            ) { [weak self] storage, _ in
+                self?.trackerCategories = storage.trackerCategories
+            }
+        )
+        
+        observations.insert(
+            CoreDataStorage.shared.observe(
+                \.trackerRecords,
+                 options: [.initial]
+            ) { [weak self] storage, _ in
+                self?.trackerRecords = storage.trackerRecords
+            }
+        )
         
         view.backgroundColor = Colors.whiteDay
         title = "Трекеры"
@@ -172,13 +189,7 @@ class TrackersMainViewController: UIViewController {
     private func plusTapped() {
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.onNewTrackerCreated = { tracker in
-            guard let categoryIndex = Storage.shared.trackerCategories.firstIndex(where: { category in
-                category.name == tracker.categoryTitle
-            }) else {
-                return
-            }
-            Storage.shared.trackerCategories[categoryIndex].trackers.append(tracker)
-            self.trackerCategories = Storage.shared.trackerCategories
+            try! CoreDataStorage.shared.add(tracker: tracker)
             addNewTrackerViewController.dismiss(animated: true)
         }
         present(addNewTrackerViewController, animated: true)
@@ -256,11 +267,10 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             }
             let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
             if trackerRecords.contains(record) {
-                Storage.shared.trackerRecords.removeAll { $0 == record }
+                try! CoreDataStorage.shared.delete(trackerRecord: record)
             } else {
-                Storage.shared.trackerRecords.append(record)
+                try! CoreDataStorage.shared.add(trackerRecord: record)
             }
-            trackerRecords = Storage.shared.trackerRecords
         }
         return trackerCell
     }

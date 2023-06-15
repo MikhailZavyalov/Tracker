@@ -1,13 +1,11 @@
 import Foundation
 
-struct TrackerRecord: Codable, Hashable {
+class TrackerRecord: NSObject, Codable {
     let trackerId: UUID
     let date: Date
-}
-
-extension TrackerRecord {
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.trackerId == rhs.trackerId
-        && Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date)
+    
+    internal init(trackerId: UUID, date: Date) {
+        self.trackerId = trackerId
+        self.date = date
     }
 }

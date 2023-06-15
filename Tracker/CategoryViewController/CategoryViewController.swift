@@ -44,11 +44,18 @@ final class CategoryViewController: UIViewController {
         return view
     }()
     
+    private var observation: NSKeyValueObservation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Colors.whiteDay
-        allCategories = Storage.shared.trackerCategories.map {
-            CategoryCellModel(title: $0.name, isSelected: false)
+        observation = CoreDataStorage.shared.observe(
+            \.trackerCategories,
+             options: [.initial]
+        ) { [weak self] storage, _ in
+            self?.allCategories = storage.trackerCategories.map {
+                CategoryCellModel(title: $0.name, isSelected: false)
+            }
         }
         
         categoriesTableView.dataSource = self
@@ -108,9 +115,10 @@ final class CategoryViewController: UIViewController {
                 self.allCategories[existingCategoryIndex].isSelected = true
                 return
             }
-            
-            self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
-            Storage.shared.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
+            // TODO: - fixMe
+//            self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
+
+            try! CoreDataStorage.shared.add(trackerCategory: TrackerCategory(name: categoryTitle, trackers: []))
         }
         present(viewController, animated: true)
     }

@@ -18,9 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    private func wipe() {
-        Storage.shared.trackerCategories = []
-        Storage.shared.trackerRecords = []
-    }
+//    private func wipe() {
+//        Storage.shared.trackerCategories = []
+//        Storage.shared.trackerRecords = []
+//    }
 }
 
