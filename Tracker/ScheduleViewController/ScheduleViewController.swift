@@ -8,22 +8,25 @@ final class ScheduleViewController: UIViewController {
     
     let scheduleLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont(name: "SF Pro", size: 16)
         label.text = "Расписание"
         return label
     }()
     
     let scheduleTableView: UITableView = {
         let tableView = UITableView()
-        tableView.layer.cornerRadius = 10
+        tableView.layer.cornerRadius = 16
+        tableView.separatorStyle = .none
         return tableView
     }()
     
     let scheduleDoneButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .black
-        button.layer.cornerRadius = 10
+        button.backgroundColor = Colors.blackDay
+        button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.setTitle("Готово", for: .normal)
+        button.titleLabel?.font = UIFont(name: "SF Pro", size: 16)
         return button
     }()
     
@@ -57,16 +60,17 @@ final class ScheduleViewController: UIViewController {
         view.addSubview(scheduleDoneButton)
         scheduleDoneButton.translatesAutoresizingMaskIntoConstraints = false
         
+        
         NSLayoutConstraint.activate([
-            scheduleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            scheduleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             scheduleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             scheduleTableView.topAnchor.constraint(equalTo: scheduleLabel.bottomAnchor, constant: 30),
-            scheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            scheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            scheduleTableView.bottomAnchor.constraint(equalTo: scheduleDoneButton.topAnchor, constant: -35),
+            scheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            scheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            scheduleTableView.heightAnchor.constraint(equalToConstant: 75 * 7),
             scheduleDoneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             scheduleDoneButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            scheduleDoneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            scheduleDoneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
         ])
     }
     
@@ -89,7 +93,10 @@ extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseID, for: indexPath)
         guard let oneDayCell = cell as? ScheduleTableViewCell else { return cell }
-        oneDayCell.configure(with: weekDays[indexPath.row])
+        oneDayCell.configure(
+            with: weekDays[indexPath.row],
+            isFirst: indexPath.row == 0,
+            isLast: indexPath.row == weekDays.count - 1)
         oneDayCell.onValueChanged = { [self] switchValue in
             weekDays[indexPath.row].switchValue = switchValue
         }
