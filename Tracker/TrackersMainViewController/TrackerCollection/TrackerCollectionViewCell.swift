@@ -77,7 +77,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         colorView.backgroundColor = model.color
         emojiLabel.text = model.emoji
         dateLabel.text = "\(model.daysCompleted) дней"
-        // для ревью - ниже использован "plus [black]" из SF Symbols, так как изображение белого цвета из макета скачивается пустым. Это наглядно видно по картинке "plus" в папке Assets
         doneButton.setImage(model.isCompleted ? UIImage(named: "done") : UIImage(named: "plus [black]"), for: .normal)
         doneButton.backgroundColor = model.isCompleted ? model.color.withAlphaComponent(0.7) : model.color
     }

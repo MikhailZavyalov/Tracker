@@ -277,6 +277,8 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             return supplementaryView
         }
         headerView.titleLabel.text = filteredTrackerCategories[indexPath.section].name
+        // TODO: - font
+//        headerView.titleLabel.font = UIFont(name: "", size: 30)
         return headerView
     }
 }

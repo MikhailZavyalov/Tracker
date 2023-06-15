@@ -47,21 +47,10 @@ final class TrackerSettingsViewController: UIViewController {
         return tableView
     }()
     
-    private let emojisCollectionView = {
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout()
-        )
-        return collectionView
-    }()
-    
-    private let colorsCollectionView = {
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout()
-        )
-        return collectionView
-    }()
+    private let emojiPicker = EmojisPickerView(emojis: [
+        "🍇", "🍈", "🍉", "🍊", "🍋", "🍌",
+        "🍍", "🥭", "🍎"
+    ])
     
     private let cancelButton: UIButton = {
         let button = UIButton()
@@ -90,24 +79,20 @@ final class TrackerSettingsViewController: UIViewController {
         super.viewDidLoad()
         
         // FIXME: - удалить, когда будет сделано emoji и colorPicker
-        currentSettings.emoji = "🏆"
         currentSettings.color = .init(uiColor: ColorSelection.colorSelection15!)
         
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
         categoryAndScheduleTableView.register(TrackerSettingsTableViewCell.self, forCellReuseIdentifier: TrackerSettingsTableViewCell.reuseID)
-        emojisCollectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
-        emojisCollectionView.dataSource = self
-        emojisCollectionView.delegate = self
-        colorsCollectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: "colorCell")
-        colorsCollectionView.dataSource = self
-        colorsCollectionView.delegate = self
         view.backgroundColor = .white
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingChanged)
         textField.delegate = self
         
+        emojiPicker.didPickEmoji = { [weak self] emoji in
+            self?.currentSettings.emoji = emoji
+        }
         setupConstraints()
     }
     
@@ -126,8 +111,8 @@ final class TrackerSettingsViewController: UIViewController {
         view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(emojisCollectionView)
-        emojisCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(emojiPicker)
+        emojiPicker.translatesAutoresizingMaskIntoConstraints = false
         
         let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
         view.addSubview(buttonsStackView)
@@ -150,10 +135,10 @@ final class TrackerSettingsViewController: UIViewController {
             categoryAndScheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             categoryAndScheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             categoryAndScheduleTableView.heightAnchor.constraint(equalToConstant: 150),
-            emojisCollectionView.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 30),
-            emojisCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            emojisCollectionView.heightAnchor.constraint(equalToConstant: 150),
-            emojisCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            emojiPicker.topAnchor.constraint(equalTo: categoryAndScheduleTableView.bottomAnchor, constant: 30),
+            emojiPicker.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            emojiPicker.heightAnchor.constraint(equalToConstant: 150),
+            emojiPicker.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             buttonsStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             buttonsStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             buttonsStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
@@ -182,7 +167,7 @@ final class TrackerSettingsViewController: UIViewController {
             createButton.backgroundColor = Colors.gray
             createButton.isUserInteractionEnabled = false
         }
-//        textLimitHint.isHidden = textField.text?.count != 38
+        //        textLimitHint.isHidden = textField.text?.count != 38
     }
 }
 
@@ -233,43 +218,12 @@ extension TrackerSettingsViewController: UITableViewDelegate {
     }
 }
 
-extension TrackerSettingsViewController: UICollectionViewDataSource {
-
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return EmojisCollection().emojisArray.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "emojiCell",
-            for: indexPath) as? EmojiAndColorCollectionViewCell
-        
-        cell?.labelView.text = EmojisCollection().emojisArray[indexPath.row]
-        return cell!
-    }
-}
-
-extension TrackerSettingsViewController: UICollectionViewDelegate {
-    
-}
-
-extension TrackerSettingsViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width / 8, height: 40)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return CGFloat(0)
-    }
-}
-
 extension TrackerSettingsViewController: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let textFieldText = textField.text,
-            let rangeOfTextToReplace = Range(range, in: textFieldText) else {
-                return false
+              let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+            return false
         }
         let substringToReplace = textFieldText[rangeOfTextToReplace]
         let count = textFieldText.count - substringToReplace.count + string.count
