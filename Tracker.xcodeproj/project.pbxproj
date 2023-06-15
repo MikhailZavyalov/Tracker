@@ -20,6 +20,7 @@
 		C1AD4F852A0018730066D64B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1AD4F842A0018730066D64B /* Assets.xcassets */; };
 		C1AEEC0E2A24F97D00F90B27 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AEEC0D2A24F97D00F90B27 /* Colors.swift */; };
 		C1B3BB8E2A3B48EE0091D830 /* EmojisPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3BB8D2A3B48EE0091D830 /* EmojisPickerView.swift */; };
+		C1B3BB902A3B64EF0091D830 /* UserDefaultsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3BB8F2A3B64EF0091D830 /* UserDefaultsStorage.swift */; };
 		C1B64D982A1BDC5C000BBFCB /* EmojisCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B64D972A1BDC5C000BBFCB /* EmojisCollectionViewCell.swift */; };
 		C1B64D9A2A1BDCCB000BBFCB /* EmojisCollectionCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B64D992A1BDCCB000BBFCB /* EmojisCollectionCellModel.swift */; };
 		C1B64ED82A225E6F0039E29E /* TrackerCollectionCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B64ED72A225E6F0039E29E /* TrackerCollectionCellModel.swift */; };
@@ -66,6 +67,7 @@
 		C1AD4F892A0018730066D64B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C1AEEC0D2A24F97D00F90B27 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		C1B3BB8D2A3B48EE0091D830 /* EmojisPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisPickerView.swift; sourceTree = "<group>"; };
+		C1B3BB8F2A3B64EF0091D830 /* UserDefaultsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorage.swift; sourceTree = "<group>"; };
 		C1B64D972A1BDC5C000BBFCB /* EmojisCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisCollectionViewCell.swift; sourceTree = "<group>"; };
 		C1B64D992A1BDCCB000BBFCB /* EmojisCollectionCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojisCollectionCellModel.swift; sourceTree = "<group>"; };
 		C1B64ED72A225E6F0039E29E /* TrackerCollectionCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionCellModel.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 			children = (
 				C1CB3E152A1D17F300EF62AB /* Storage.swift */,
 				C1B6C1D62A3A33D500C7F66A /* TrackerStorage.swift */,
+				C1B3BB8F2A3B64EF0091D830 /* UserDefaultsStorage.swift */,
 				C1B6C1D32A3A324700C7F66A /* CoreDataModel.xcdatamodeld */,
 			);
 			path = Storage;
@@ -338,6 +341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1B3BB902A3B64EF0091D830 /* UserDefaultsStorage.swift in Sources */,
 				C1CCEAD42A0BD61E00007FD8 /* TrackerCategory.swift in Sources */,
 				C1AEEC0E2A24F97D00F90B27 /* Colors.swift in Sources */,
 				C1B64EDA2A2261A10039E29E /* Date+WeekDay.swift in Sources */,

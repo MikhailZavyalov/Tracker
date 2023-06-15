@@ -1,6 +1,6 @@
 import UIKit
 
-struct Tracker: Codable, Equatable {
+struct Tracker: Codable, Hashable {
     let id: UUID
     let color: Color
     let title: String
@@ -8,7 +8,7 @@ struct Tracker: Codable, Equatable {
     let categoryTitle: String
     let daysOfWeek: Set<WeekDay>
     
-    enum WeekDay: Codable, CaseIterable, Equatable {
+    enum WeekDay: Codable, CaseIterable, Hashable {
         case monday
         case tuesday
         case wednesday
@@ -18,7 +18,7 @@ struct Tracker: Codable, Equatable {
         case sunday
     }
     
-    struct Color: Codable, Equatable {
+    struct Color: Codable, Hashable {
         let red: CGFloat
         let green: CGFloat
         let blue: CGFloat

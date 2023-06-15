@@ -47,7 +47,7 @@ final class CategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Colors.whiteDay
-        allCategories = Storage.trackerCategories.map {
+        allCategories = Storage.shared.trackerCategories.map {
             CategoryCellModel(title: $0.name, isSelected: false)
         }
         
@@ -110,7 +110,7 @@ final class CategoryViewController: UIViewController {
             }
             
             self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
-            Storage.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
+            Storage.shared.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
         }
         present(viewController, animated: true)
     }

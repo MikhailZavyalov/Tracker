@@ -80,8 +80,8 @@ class TrackersMainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        trackerCategories = Storage.trackerCategories
-        trackerRecords = Storage.trackerRecords
+        trackerCategories = Storage.shared.trackerCategories
+        trackerRecords = Storage.shared.trackerRecords
         
         view.backgroundColor = Colors.whiteDay
         title = "Трекеры"
@@ -172,13 +172,13 @@ class TrackersMainViewController: UIViewController {
     private func plusTapped() {
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.onNewTrackerCreated = { tracker in
-            guard let categoryIndex = Storage.trackerCategories.firstIndex(where: { category in
+            guard let categoryIndex = Storage.shared.trackerCategories.firstIndex(where: { category in
                 category.name == tracker.categoryTitle
             }) else {
                 return
             }
-            Storage.trackerCategories[categoryIndex].trackers.append(tracker)
-            self.trackerCategories = Storage.trackerCategories
+            Storage.shared.trackerCategories[categoryIndex].trackers.append(tracker)
+            self.trackerCategories = Storage.shared.trackerCategories
             addNewTrackerViewController.dismiss(animated: true)
         }
         present(addNewTrackerViewController, animated: true)
@@ -256,11 +256,11 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             }
             let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
             if trackerRecords.contains(record) {
-                Storage.trackerRecords.removeAll { $0 == record }
+                Storage.shared.trackerRecords.removeAll { $0 == record }
             } else {
-                Storage.trackerRecords.append(record)
+                Storage.shared.trackerRecords.append(record)
             }
-            trackerRecords = Storage.trackerRecords
+            trackerRecords = Storage.shared.trackerRecords
         }
         return trackerCell
     }
