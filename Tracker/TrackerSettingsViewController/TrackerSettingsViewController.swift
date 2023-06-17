@@ -237,7 +237,7 @@ final class TrackerSettingsViewController: UIViewController {
         let width = UIScreen.main.bounds.width - 2 * Const.pickersHorizontalInsets
         let lineItemCountEmoji = floor((width + EmojisPickerView.Const.interitemSpacing) / (EmojisPickerView.Const.itemSize.width + EmojisPickerView.Const.interitemSpacing))
         let lineCountEmoji = ceil(CGFloat(TrackerSettingsViewController.emojis.count) / lineItemCountEmoji)
-        let emojiPickerHeight = (EmojisPickerView.Const.itemSize.height + EmojisPickerView.Const.lineSpacing) * lineCountEmoji - EmojisPickerView.Const.lineSpacing + EmojisPickerView.Const.headerHeight
+        let emojiPickerHeight = (EmojisPickerView.Const.itemSize.height + EmojisPickerView.Const.lineSpacing) * lineCountEmoji - EmojisPickerView.Const.lineSpacing + EmojisPickerView.Const.headerHeight + EmojisPickerView.Const.sectionTopInset
         return emojiPickerHeight
     }
     
@@ -245,7 +245,7 @@ final class TrackerSettingsViewController: UIViewController {
         let width = UIScreen.main.bounds.width - 2 * Const.pickersHorizontalInsets
         let lineItemCountColors = floor((width + ColorsPickerView.Const.interitemSpacing) / (ColorsPickerView.Const.itemSize.width + ColorsPickerView.Const.interitemSpacing))
         let lineCountColors = ceil(CGFloat(TrackerSettingsViewController.colors.count) / lineItemCountColors)
-        let colorPickerHeight = (ColorsPickerView.Const.itemSize.height + ColorsPickerView.Const.lineSpacing) * lineCountColors - ColorsPickerView.Const.lineSpacing + ColorsPickerView.Const.headerHeight
+        let colorPickerHeight = (ColorsPickerView.Const.itemSize.height + ColorsPickerView.Const.lineSpacing) * lineCountColors - ColorsPickerView.Const.lineSpacing + ColorsPickerView.Const.headerHeight + ColorsPickerView.Const.sectionTopInset
         return colorPickerHeight
     }
 }

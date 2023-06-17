@@ -16,6 +16,7 @@ final class EmojisCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(emoji)
         emoji.translatesAutoresizingMaskIntoConstraints = false
         emoji.textAlignment = .center
+        emoji.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         
         NSLayoutConstraint.activate([
             emoji.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

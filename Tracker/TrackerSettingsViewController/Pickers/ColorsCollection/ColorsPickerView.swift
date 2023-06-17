@@ -81,11 +81,13 @@ extension ColorsPickerView: UICollectionViewDataSource {
         else {
             return supplementaryView
         }
-        headerView.titleLabel.text = "Цвет"
-        headerView.titleLabel.textColor = Colors.black
-        // TODO: - font
-        //        headerView.titleLabel.font = UIFont(name: "", size: 30)
+        headerView.text = "Цвет"
+        headerView.leftInset = 6
         return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: Const.sectionTopInset, left: 0, bottom: 0, right: 0)
     }
 }
 
