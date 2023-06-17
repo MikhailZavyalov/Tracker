@@ -10,6 +10,8 @@ final class CategoryViewController: UIViewController {
         }
     }
     
+    private var selectedCategory: String?
+    
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Категория"
@@ -54,7 +56,7 @@ final class CategoryViewController: UIViewController {
              options: [.initial]
         ) { [weak self] storage, _ in
             self?.allCategories = storage.trackerCategories.map {
-                CategoryCellModel(title: $0.name, isSelected: false)
+                CategoryCellModel(title: $0.name, isSelected: $0.name == self?.selectedCategory)
             }
         }
         
@@ -115,9 +117,8 @@ final class CategoryViewController: UIViewController {
                 self.allCategories[existingCategoryIndex].isSelected = true
                 return
             }
-            // TODO: - fixMe
-//            self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
-
+            
+            self.selectedCategory = categoryTitle
             try! CoreDataStorage.shared.add(trackerCategory: TrackerCategory(name: categoryTitle, trackers: []))
         }
         present(viewController, animated: true)
