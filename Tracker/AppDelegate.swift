@@ -18,9 +18,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-//    private func wipe() {
-//        Storage.shared.trackerCategories = []
-//        Storage.shared.trackerRecords = []
-//    }
+    private func wipe() {
+        let fetchRequests: [NSFetchRequest<NSFetchRequestResult>] = [
+            NSFetchRequest(entityName: "TrackerRecordCoreData"),
+            NSFetchRequest(entityName: "TrackerCoreData"),
+            NSFetchRequest(entityName: "TrackerCategoryCoreData")
+        ]
+        let deleteRequests = fetchRequests.map { NSBatchDeleteRequest(fetchRequest: $0) }
+        let context = persistentContainer.viewContext
+        
+        do {
+            try deleteRequests.forEach {
+                try context.execute($0)
+            }
+        } catch let error as NSError {
+            print(error)
+        }
+    }
 }
 

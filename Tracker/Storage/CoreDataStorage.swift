@@ -70,7 +70,7 @@ final class CoreDataStorage: NSObject {
         let records = try fetchRecords()
         let record = records.first {
             $0.tracker?.trackerId == trackerRecord.trackerId
-            && $0.date == trackerRecord.date
+            && Calendar.current.isDate($0.date!, inSameDayAs: trackerRecord.date)
         }
         context.delete(record!)
         try updateData()
