@@ -30,6 +30,7 @@ final class CoreDataStorage: NSObject {
         trackerCoreData.daysOfWeek = try JSONEncoder().encode(tracker.daysOfWeek)
         trackerCoreData.trackerId = tracker.id
         trackerCoreData.title = tracker.title
+        trackerCoreData.creationDate = tracker.creationDate
         trackerCoreData.records = []
         
         let categories = try fetchCategories()
@@ -83,6 +84,9 @@ final class CoreDataStorage: NSObject {
     
     private func fetchTrackers() throws -> [TrackerCoreData] {
         let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TrackerCoreData.creationDate, ascending: true)
+        ]
         return try context.fetch(fetchRequest)
     }
     
@@ -105,7 +109,8 @@ extension TrackerCoreData {
             title: title!,
             emoji: emoji!,
             categoryTitle: categoryTitle!,
-            daysOfWeek: try! JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek!)
+            daysOfWeek: try! JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek!),
+            creationDate: creationDate!
         )
     }
 }

@@ -7,14 +7,16 @@ class Tracker: NSObject, Codable {
     let emoji: String
     let categoryTitle: String
     let daysOfWeek: Set<WeekDay>
+    let creationDate: Date
     
-    internal init(id: UUID, color: Tracker.Color, title: String, emoji: String, categoryTitle: String, daysOfWeek: Set<Tracker.WeekDay>) {
+    internal init(id: UUID, color: Tracker.Color, title: String, emoji: String, categoryTitle: String, daysOfWeek: Set<Tracker.WeekDay>, creationDate: Date) {
         self.id = id
         self.color = color
         self.title = title
         self.emoji = emoji
         self.categoryTitle = categoryTitle
         self.daysOfWeek = daysOfWeek
+        self.creationDate = creationDate
     }
     
     enum WeekDay: Codable, CaseIterable, Hashable {
