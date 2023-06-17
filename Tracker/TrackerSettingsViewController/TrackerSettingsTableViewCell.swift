@@ -9,7 +9,7 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
     
     private let subTitleLabel: UILabel = {
         let subTitleLabel = UILabel()
-        subTitleLabel.textColor = Colors.blackDay
+        subTitleLabel.textColor = Colors.black
         subTitleLabel.font = UIFont(name: "SF Pro", size: 17)
         return subTitleLabel
     }()
@@ -33,7 +33,8 @@ final class TrackerSettingsTableViewCell: UITableViewCell {
         contentView.addSubview(arrowImageView)
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        contentView.backgroundColor = Colors.backgroundDay
+        contentView.backgroundColor = Colors.background
+        selectionStyle = .none
 
         setupConstraints()
     }

@@ -34,7 +34,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textColor = Colors.whiteDay
+        titleLabel.textColor = Colors.white
         
         contentView.addSubview(dateLabel)
         dateLabel.translatesAutoresizingMaskIntoConstraints = false

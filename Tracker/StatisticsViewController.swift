@@ -6,7 +6,7 @@ final class StatisticsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Статистика"
-        label.textColor = Colors.blackDay
+        label.textColor = Colors.black
         label.font = .boldSystemFont(ofSize: 34)
         print("🅰️", label.font.fontName)
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
@@ -24,7 +24,7 @@ final class StatisticsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Colors.whiteDay
+        view.backgroundColor = Colors.white
         constrConf()
     }
     

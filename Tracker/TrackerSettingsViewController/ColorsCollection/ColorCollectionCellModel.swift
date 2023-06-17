@@ -1,5 +1,5 @@
 import UIKit
 
-struct ColorCollectionCellModel {
+struct ColorsCollectionCellModel {
     let color: UIColor
 }

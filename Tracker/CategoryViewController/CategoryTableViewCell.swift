@@ -22,11 +22,11 @@ final class CategoryTableViewCell: UITableViewCell {
         
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.backgroundColor = Colors.backgroundDay
+        contentView.backgroundColor = Colors.background
         contentView.addSubview(accessoryImageView)
         accessoryImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        contentView.backgroundColor = Colors.backgroundDay
+        contentView.backgroundColor = Colors.background
         contentView.layer.cornerRadius = 16
         contentView.addSubview(separator)
 

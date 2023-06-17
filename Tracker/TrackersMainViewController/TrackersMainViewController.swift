@@ -50,13 +50,14 @@ class TrackersMainViewController: UIViewController {
         let uiSearchTextField = UISearchTextField()
         uiSearchTextField.placeholder = "Поиск"
         uiSearchTextField.clearButtonMode = .never
+        uiSearchTextField.tintColor = Colors.black
         return uiSearchTextField
     }()
     
     private let clearSearchFieldButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
-        button.backgroundColor = Colors.whiteDay
+        button.backgroundColor = Colors.white
         button.setTitleColor(Colors.blue, for: .normal)
         button.titleLabel?.font = UIFont(name: "SF Pro", size: 17)
         button.isHidden = true
@@ -72,7 +73,7 @@ class TrackersMainViewController: UIViewController {
     
     private let separator: UIView = {
         let separator = UIView()
-        separator.backgroundColor = Colors.lightGray
+        separator.backgroundColor = Colors.white
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
         return separator
@@ -100,7 +101,8 @@ class TrackersMainViewController: UIViewController {
             }
         )
         
-        view.backgroundColor = Colors.whiteDay
+        view.backgroundColor = Colors.white
+        collectionView.backgroundColor = Colors.white
         title = "Трекеры"
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
@@ -137,8 +139,8 @@ class TrackersMainViewController: UIViewController {
             
             let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusTapped))
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
-            navBar.topItem?.leftBarButtonItem?.tintColor = Colors.blackDay
-            navBar.backgroundColor = Colors.whiteDay
+            navBar.topItem?.leftBarButtonItem?.tintColor = Colors.black
+            navBar.backgroundColor = Colors.white
         }
         
         navigationController?.navigationBar.prefersLargeTitles = true

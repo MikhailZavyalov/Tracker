@@ -25,13 +25,15 @@ final class EmptyStateView: UIView {
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.numberOfLines = 0
         textLabel.widthAnchor.constraint(equalToConstant: 250).isActive = true
+        textLabel.textColor = Colors.black
         textLabel.font = UIFont(name: "SF Pro", size: 12)
         textLabel.textAlignment = .center
         return textLabel
     }()
     
     init() {
-        super .init(frame: .zero)
+        super.init(frame: .zero)
+        backgroundColor = Colors.white
         let vStack = UIStackView(arrangedSubviews: [imageView, textLabel])
         vStack.translatesAutoresizingMaskIntoConstraints = false
         vStack.axis = .vertical

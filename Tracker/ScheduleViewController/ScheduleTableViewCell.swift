@@ -29,7 +29,7 @@ final class ScheduleTableViewCell: UITableViewCell {
         contentView.addSubview(uiSwitch)
         uiSwitch.translatesAutoresizingMaskIntoConstraints = false
         uiSwitch.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
-        contentView.backgroundColor = Colors.backgroundDay
+        contentView.backgroundColor = Colors.background
         contentView.heightAnchor.constraint(equalToConstant: 75).isActive = true
         contentView.addSubview(separator)
         

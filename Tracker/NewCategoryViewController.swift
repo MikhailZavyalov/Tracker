@@ -6,14 +6,14 @@ final class NewCategoryViewController: UIViewController {
     
     private let newCategoryLabel: UILabel = {
        let label = UILabel()
-        label.textColor = .black
+        label.textColor = Colors.black
         label.text = "Новая категория"
         return label
     }()
     
     private let newCategoryTextField: UITextField = {
         let textField = UITextField.textFieldWithInsets(insets: UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
-        textField.backgroundColor = Colors.backgroundDay
+        textField.backgroundColor = Colors.background
         textField.layer.cornerRadius = 16
         textField.placeholder = "Введите название категории"
         return textField
@@ -21,9 +21,9 @@ final class NewCategoryViewController: UIViewController {
     
     private let newCategoryDoneButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .black
+        button.backgroundColor = Colors.black
         button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(Colors.white, for: .normal)
         button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
@@ -31,7 +31,7 @@ final class NewCategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.white
         newCategoryTextField.addTarget(self, action: #selector(editingChanged), for: .editingChanged)
         newCategoryTextField.addTarget(self, action: #selector(editingDidBegin), for: .editingDidBegin)
         newCategoryTextField.addTarget(self, action: #selector(editingDidEndOnExit), for: .editingDidEndOnExit)
@@ -82,7 +82,7 @@ final class NewCategoryViewController: UIViewController {
     
     private func updateNewCategoryDoneButtonState() {
         if isTextValid() {
-            newCategoryDoneButton.backgroundColor = Colors.blackDay
+            newCategoryDoneButton.backgroundColor = Colors.black
             newCategoryDoneButton.isUserInteractionEnabled = true
         } else {
             newCategoryDoneButton.backgroundColor = Colors.gray
