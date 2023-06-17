@@ -124,14 +124,14 @@ final class TrackerSettingsViewController: UIViewController {
         super.viewSafeAreaInsetsDidChange()
         var scrollInset = scrollView.contentInset
         scrollInset.top = view.safeAreaInsets.top + 27
+        let bottomContentInset = Const.bottomButtonsBottomInset + Const.bottomButtonsTopInset + Const.bottomButtonsHeight
+        scrollInset.bottom = bottomContentInset + view.safeAreaInsets.bottom
         scrollView.contentInset = scrollInset
     }
     
     private func setupConstraints() {
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        let bottomContentInset = Const.bottomButtonsBottomInset + Const.bottomButtonsTopInset + Const.bottomButtonsHeight
-        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomContentInset, right: 0)
         
         scrollView.addSubview(categoryAndScheduleTableView)
         categoryAndScheduleTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -237,7 +237,7 @@ final class TrackerSettingsViewController: UIViewController {
         let width = UIScreen.main.bounds.width - 2 * Const.pickersHorizontalInsets
         let lineItemCountEmoji = floor((width + EmojisPickerView.Const.interitemSpacing) / (EmojisPickerView.Const.itemSize.width + EmojisPickerView.Const.interitemSpacing))
         let lineCountEmoji = ceil(CGFloat(TrackerSettingsViewController.emojis.count) / lineItemCountEmoji)
-        let emojiPickerHeight = (EmojisPickerView.Const.itemSize.height + EmojisPickerView.Const.lineSpacing) * lineCountEmoji - EmojisPickerView.Const.lineSpacing
+        let emojiPickerHeight = (EmojisPickerView.Const.itemSize.height + EmojisPickerView.Const.lineSpacing) * lineCountEmoji - EmojisPickerView.Const.lineSpacing + EmojisPickerView.Const.headerHeight
         return emojiPickerHeight
     }
     
@@ -245,7 +245,7 @@ final class TrackerSettingsViewController: UIViewController {
         let width = UIScreen.main.bounds.width - 2 * Const.pickersHorizontalInsets
         let lineItemCountColors = floor((width + ColorsPickerView.Const.interitemSpacing) / (ColorsPickerView.Const.itemSize.width + ColorsPickerView.Const.interitemSpacing))
         let lineCountColors = ceil(CGFloat(TrackerSettingsViewController.colors.count) / lineItemCountColors)
-        let colorPickerHeight = (ColorsPickerView.Const.itemSize.height + ColorsPickerView.Const.lineSpacing) * lineCountColors - ColorsPickerView.Const.lineSpacing
+        let colorPickerHeight = (ColorsPickerView.Const.itemSize.height + ColorsPickerView.Const.lineSpacing) * lineCountColors - ColorsPickerView.Const.lineSpacing + ColorsPickerView.Const.headerHeight
         return colorPickerHeight
     }
 }

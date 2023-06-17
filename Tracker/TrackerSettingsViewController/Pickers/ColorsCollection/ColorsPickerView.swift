@@ -2,7 +2,7 @@ import UIKit
 
 final class ColorsPickerView: UIView {
     enum Const {
-        static let headerHeight: CGFloat = 15
+        static let headerHeight: CGFloat = 20
         static let sectionTopInset: CGFloat = 24
         static let itemSize: CGSize = CGSize(width: 52, height: 52)
         static let interitemSpacing: CGFloat = 5
@@ -12,7 +12,7 @@ final class ColorsPickerView: UIView {
     var didPickColor: ((UIColor) -> Void)?
     
     private let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = PickerFlowLayout()
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.itemSize = CGSize(width: 52, height: 52)
