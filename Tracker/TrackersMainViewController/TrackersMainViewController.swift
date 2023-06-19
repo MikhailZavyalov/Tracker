@@ -262,8 +262,7 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         
         trackerCell.doneButtonAction = { [self] in
             guard
-                tracker.daysOfWeek.contains(currentFilters.date.weekDay!) &&
-                    Calendar.current.isDateInToday(currentFilters.date)
+                tracker.daysOfWeek.contains(currentFilters.date.weekDay!)
             else {
                 return
             }
@@ -329,9 +328,8 @@ private extension TrackerCategory {
         let result = trackers.filter { tracker in
             let weekDay = filters.date.weekDay
             let containsWeekDay = weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
-            let isToday = Calendar.current.isDateInToday(filters.date)
             let containsText = filters.searchText == nil ? true : tracker.title.contains(filters.searchText!)
-            return (containsWeekDay || isToday) && containsText
+            return containsWeekDay && containsText
         }
         return result
     }

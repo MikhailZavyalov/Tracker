@@ -29,6 +29,7 @@ final class CategoryTableViewCell: UITableViewCell {
         contentView.backgroundColor = Colors.background
         contentView.layer.cornerRadius = 16
         contentView.addSubview(separator)
+        selectionStyle = .none
 
         setupConstraints()
     }

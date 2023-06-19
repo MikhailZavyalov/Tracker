@@ -1,14 +1,14 @@
 import UIKit
 
 enum Colors {
-    static let white = UIColor(named: "White")!
-    static let black = UIColor(named: "Black")!
-    static let background = UIColor(named: "Background")!
-    static let gray = UIColor(named: "Gray")!
-    static let lightGray = UIColor(named: "Light Gray")!
-    static let red = UIColor(named: "Red")!
-    static let blue = UIColor(named: "Blue")!
-    static let uiSwitchBlue = UIColor(named: "UISwitch [blue]")!
+    static let white = UIColor(named: "White") ?? .white
+    static let black = UIColor(named: "Black") ?? .black
+    static let background = UIColor(named: "Background") ?? .darkGray
+    static let gray = UIColor(named: "Gray") ?? .gray
+    static let lightGray = UIColor(named: "Light Gray") ?? .lightGray
+    static let red = UIColor(named: "Red") ?? .red
+    static let blue = UIColor(named: "Blue") ?? .blue
+    static let uiSwitchBlue = UIColor(named: "UISwitch [blue]") ?? .blue
 }
 
 enum ColorSelection: String, CaseIterable {

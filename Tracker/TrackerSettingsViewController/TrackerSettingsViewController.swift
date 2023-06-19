@@ -149,6 +149,7 @@ final class TrackerSettingsViewController: UIViewController {
         colorPicker.translatesAutoresizingMaskIntoConstraints = false
         
         let buttonsStackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
+        
         view.addSubview(buttonsStackView)
         buttonsStackView.axis = .horizontal
         buttonsStackView.spacing = 8

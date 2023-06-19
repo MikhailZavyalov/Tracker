@@ -8,7 +8,6 @@ final class StatisticsViewController: UIViewController {
         label.text = "Статистика"
         label.textColor = Colors.black
         label.font = .boldSystemFont(ofSize: 34)
-        print("🅰️", label.font.fontName)
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         print(label.font.fontName)
         return label

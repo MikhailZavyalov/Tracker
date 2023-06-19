@@ -32,6 +32,7 @@ final class ScheduleTableViewCell: UITableViewCell {
         contentView.backgroundColor = Colors.background
         contentView.heightAnchor.constraint(equalToConstant: 75).isActive = true
         contentView.addSubview(separator)
+        selectionStyle = .none
         
         setupConstraints()
     }
@@ -79,10 +80,3 @@ final class ScheduleTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate(constraints)
     }
 }
-
-//struct SettingsTableViewCell_Previews: PreviewProvider {
-//    static var previews: some View {
-//        return UIViewRepresented(makeUIView: { _ in SettingsTableViewCell(style: .default, reuseIdentifier: nil) })
-//    }
-//}
-

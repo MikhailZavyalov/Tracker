@@ -2,6 +2,10 @@ import Foundation
 import UIKit
 import CoreData
 
+private enum CoreDataStorageError: Error {
+    case invalidNSManagedObject(NSManagedObject)
+}
+
 final class CoreDataStorage: NSObject {
     static let shared = CoreDataStorage()
     
@@ -78,8 +82,8 @@ final class CoreDataStorage: NSObject {
     }
     
     private func updateData() throws {
-        trackerCategories = try fetchCategories().map { $0.mapToTrackerCategory() }
-        trackerRecords = try fetchRecords().map { $0.mapToTrackerRecord() }
+        trackerCategories = try fetchCategories().map { try $0.mapToTrackerCategory() }
+        trackerRecords = try fetchRecords().map { try $0.mapToTrackerRecord() }
     }
     
     private func fetchTrackers() throws -> [TrackerCoreData] {
@@ -102,33 +106,49 @@ final class CoreDataStorage: NSObject {
 }
 
 extension TrackerCoreData {
-    func mapToTracker() -> Tracker {
-        Tracker(
-            id: trackerId!,
-            color: try! JSONDecoder().decode(Tracker.Color.self, from: color!),
-            title: title!,
-            emoji: emoji!,
-            categoryTitle: categoryTitle!,
-            daysOfWeek: try! JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek!),
-            creationDate: creationDate!
+    func mapToTracker() throws -> Tracker {
+        guard
+            let trackerId,
+            let color,
+            let title,
+            let emoji,
+            let categoryTitle,
+            let daysOfWeek,
+            let creationDate
+        else { throw CoreDataStorageError.invalidNSManagedObject(self) }
+        
+        return Tracker(
+            id: trackerId,
+            color: try JSONDecoder().decode(Tracker.Color.self, from: color),
+            title: title,
+            emoji: emoji,
+            categoryTitle: categoryTitle,
+            daysOfWeek: try JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek),
+            creationDate: creationDate
         )
     }
 }
 
 extension TrackerCategoryCoreData {
-    func mapToTrackerCategory() -> TrackerCategory {
-        TrackerCategory(
-            name: name!,
-            trackers: trackers!.map { ($0 as! TrackerCoreData).mapToTracker() }
+    func mapToTrackerCategory() throws -> TrackerCategory {
+        guard let name else { throw CoreDataStorageError.invalidNSManagedObject(self) }
+        return TrackerCategory(
+            name: name,
+            trackers: try trackers?.compactMap { try ($0 as? TrackerCoreData)?.mapToTracker() } ?? []
         )
     }
 }
 
 extension TrackerRecordCoreData {
-    func mapToTrackerRecord() -> TrackerRecord {
-        TrackerRecord(
-            trackerId: tracker!.trackerId!,
-            date: date!
+    func mapToTrackerRecord() throws -> TrackerRecord {
+        guard
+            let trackerId = tracker?.trackerId,
+            let date
+        else { throw CoreDataStorageError.invalidNSManagedObject(self) }
+        
+        return TrackerRecord(
+            trackerId: trackerId,
+            date: date
         )
     }
 }
