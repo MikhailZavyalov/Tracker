@@ -73,7 +73,6 @@ final class TrackerSettingsViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Отменить", for: .normal)
-        button.setTitleColor(UIColor(named: "Red"), for: .normal)
         button.backgroundColor = Colors.white
         button.setTitleColor(Colors.red, for: .normal)
         button.layer.cornerRadius = 16
