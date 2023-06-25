@@ -3,6 +3,7 @@ import SwiftUI
 
 final class CategoryViewController: UIViewController {
     var onUserDidSelectCategory: ((String) -> Void)?
+    var selectedCategory: String?
     
     private var allCategories: [CategoryCellModel] = [] {
         didSet {
@@ -14,8 +15,7 @@ final class CategoryViewController: UIViewController {
         let label = UILabel()
         label.text = "Категория"
         label.font = UIFont(name: "SF Pro", size: 16)
-        label.textColor = Colors.blackDay
-        label.backgroundColor = UIColor(named: "White [day]")
+        label.textColor = Colors.black
         label.textAlignment = .center
         return label
     }()
@@ -29,9 +29,9 @@ final class CategoryViewController: UIViewController {
     private let addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(UIColor(named: "White [day]"), for: .normal)
+        button.setTitleColor(Colors.white, for: .normal)
         button.titleLabel?.font = UIFont(name: "SF Pro", size: 16)
-        button.backgroundColor = Colors.blackDay
+        button.backgroundColor = Colors.black
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.layer.cornerRadius = 16
         return button
@@ -44,11 +44,18 @@ final class CategoryViewController: UIViewController {
         return view
     }()
     
+    private var observation: NSKeyValueObservation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Colors.whiteDay
-        allCategories = Storage.trackerCategories.map {
-            CategoryCellModel(title: $0.name, isSelected: false)
+        view.backgroundColor = Colors.white
+        observation = CoreDataStorage.shared.observe(
+            \.trackerCategories,
+             options: [.initial]
+        ) { [weak self] storage, _ in
+            self?.allCategories = storage.trackerCategories.map {
+                CategoryCellModel(title: $0.name, isSelected: $0.name == self?.selectedCategory)
+            }
         }
         
         categoriesTableView.dataSource = self
@@ -109,8 +116,8 @@ final class CategoryViewController: UIViewController {
                 return
             }
             
-            self.allCategories.append(CategoryCellModel(title: categoryTitle, isSelected: true))
-            Storage.trackerCategories.append(TrackerCategory(name: categoryTitle, trackers: []))
+            self.selectedCategory = categoryTitle
+            try! CoreDataStorage.shared.add(trackerCategory: TrackerCategory(name: categoryTitle, trackers: []))
         }
         present(viewController, animated: true)
     }

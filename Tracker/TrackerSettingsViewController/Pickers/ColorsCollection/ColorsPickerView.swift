@@ -1,10 +1,18 @@
 import UIKit
 
-final class EmojisPickerView: UIView {
-    var didPickEmoji: ((String) -> Void)?
+final class ColorsPickerView: UIView {
+    enum Const {
+        static let headerHeight: CGFloat = 20
+        static let sectionTopInset: CGFloat = 24
+        static let itemSize: CGSize = CGSize(width: 52, height: 52)
+        static let interitemSpacing: CGFloat = 5
+        static let lineSpacing: CGFloat = 0
+    }
+    
+    var didPickColor: ((UIColor) -> Void)?
     
     private let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = PickerFlowLayout()
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.itemSize = CGSize(width: 52, height: 52)
@@ -12,17 +20,19 @@ final class EmojisPickerView: UIView {
             frame: .zero,
             collectionViewLayout: layout
         )
+        collectionView.isScrollEnabled = false
         return collectionView
     }()
     
-    private let emojiCellModels: [EmojisCollectionCellModel]
+    private let colorCellModels: [ColorsCollectionCellModel]
     
-    init(emojis: [String]) {
-        emojiCellModels = emojis.map { EmojisCollectionCellModel(emoji: $0) }
+    init(colors: [UIColor]) {
+        colorCellModels = colors.map { ColorsCollectionCellModel(color: $0) }
         super.init(frame: .zero)
+        collectionView.backgroundColor = Colors.white
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(EmojisCollectionViewCell.self, forCellWithReuseIdentifier: EmojisCollectionViewCell.reuseID)
+        collectionView.register(ColorsCollectionViewCell.self, forCellWithReuseIdentifier: ColorsCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
         setupConstraints()
     }
@@ -44,20 +54,20 @@ final class EmojisPickerView: UIView {
     }
 }
 
-extension EmojisPickerView: UICollectionViewDataSource {
+extension ColorsPickerView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return emojiCellModels.count
+        return colorCellModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: EmojisCollectionViewCell.reuseID,
+            withReuseIdentifier: ColorsCollectionViewCell.reuseID,
             for: indexPath)
         
-        guard let emojisCell = cell as? EmojisCollectionViewCell else { return cell }
+        guard let ColorsCell = cell as? ColorsCollectionViewCell else { return cell }
         
-        emojisCell.configureWith(model: emojiCellModels[indexPath.row])
-        return emojisCell
+        ColorsCell.configureWith(model: colorCellModels[indexPath.row])
+        return ColorsCell
     }
     
     func collectionView(
@@ -71,17 +81,19 @@ extension EmojisPickerView: UICollectionViewDataSource {
         else {
             return supplementaryView
         }
-        headerView.titleLabel.text = "Colors"
-        headerView.tintColor = Colors.blackDay
-        // TODO: - font
-        //        headerView.titleLabel.font = UIFont(name: "", size: 30)
+        headerView.text = "Цвет"
+        headerView.leftInset = 6
         return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: Const.sectionTopInset, left: 0, bottom: 0, right: 0)
     }
 }
 
-extension EmojisPickerView: UICollectionViewDelegateFlowLayout {
+extension ColorsPickerView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        didPickEmoji?(emojiCellModels[indexPath.row].emoji)
+        didPickColor?(colorCellModels[indexPath.row].color)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

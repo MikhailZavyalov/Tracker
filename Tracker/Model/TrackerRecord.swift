@@ -1,13 +1,19 @@
 import Foundation
 
-struct TrackerRecord: Codable, Equatable {
+class TrackerRecord: NSObject, Codable {
     let trackerId: UUID
     let date: Date
+    
+    internal init(trackerId: UUID, date: Date) {
+        self.trackerId = trackerId
+        self.date = date
+    }
 }
 
 extension TrackerRecord {
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.trackerId == rhs.trackerId
-        && Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date)
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? TrackerRecord else { return false }
+        return trackerId == other.trackerId
+        && Calendar.current.isDate(date, inSameDayAs: other.date)
     }
 }

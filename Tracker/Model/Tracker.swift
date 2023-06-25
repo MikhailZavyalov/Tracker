@@ -1,14 +1,25 @@
 import UIKit
 
-struct Tracker: Codable, Equatable {
+class Tracker: NSObject, Codable {
     let id: UUID
     let color: Color
     let title: String
     let emoji: String
     let categoryTitle: String
     let daysOfWeek: Set<WeekDay>
+    let creationDate: Date
     
-    enum WeekDay: Codable, CaseIterable, Equatable {
+    internal init(id: UUID, color: Tracker.Color, title: String, emoji: String, categoryTitle: String, daysOfWeek: Set<Tracker.WeekDay>, creationDate: Date) {
+        self.id = id
+        self.color = color
+        self.title = title
+        self.emoji = emoji
+        self.categoryTitle = categoryTitle
+        self.daysOfWeek = daysOfWeek
+        self.creationDate = creationDate
+    }
+    
+    enum WeekDay: Codable, CaseIterable, Hashable {
         case monday
         case tuesday
         case wednesday
@@ -18,7 +29,7 @@ struct Tracker: Codable, Equatable {
         case sunday
     }
     
-    struct Color: Codable, Equatable {
+    struct Color: Codable, Hashable {
         let red: CGFloat
         let green: CGFloat
         let blue: CGFloat

@@ -10,6 +10,7 @@ final class ScheduleViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont(name: "SF Pro", size: 16)
         label.text = "Расписание"
+        label.textColor = Colors.black
         return label
     }()
     
@@ -22,7 +23,8 @@ final class ScheduleViewController: UIViewController {
     
     let scheduleDoneButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = Colors.blackDay
+        button.backgroundColor = Colors.black
+        button.setTitleColor(Colors.white, for: .normal)
         button.layer.cornerRadius = 16
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.setTitle("Готово", for: .normal)
@@ -46,7 +48,7 @@ final class ScheduleViewController: UIViewController {
         scheduleTableView.dataSource = self
         scheduleTableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseID)
         scheduleDoneButton.addTarget(self, action: #selector(scheduleDoneButtonTapped), for: .touchUpInside)
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.white
         setupConstraints()
     }
     
@@ -111,4 +113,3 @@ struct ScheduleViewController_Previews: PreviewProvider {
         return UIViewRepresented(makeUIView: { _ in vc.view })
     }
 }
-

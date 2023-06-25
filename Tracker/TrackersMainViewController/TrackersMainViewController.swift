@@ -50,13 +50,14 @@ class TrackersMainViewController: UIViewController {
         let uiSearchTextField = UISearchTextField()
         uiSearchTextField.placeholder = "Поиск"
         uiSearchTextField.clearButtonMode = .never
+        uiSearchTextField.tintColor = Colors.black
         return uiSearchTextField
     }()
     
     private let clearSearchFieldButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
-        button.backgroundColor = Colors.whiteDay
+        button.backgroundColor = Colors.white
         button.setTitleColor(Colors.blue, for: .normal)
         button.titleLabel?.font = UIFont(name: "SF Pro", size: 17)
         button.isHidden = true
@@ -72,18 +73,36 @@ class TrackersMainViewController: UIViewController {
     
     private let separator: UIView = {
         let separator = UIView()
-        separator.backgroundColor = Colors.lightGray
+        separator.backgroundColor = Colors.white
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
         return separator
     }()
     
+    private var observations: Set<NSKeyValueObservation> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        trackerCategories = Storage.trackerCategories
-        trackerRecords = Storage.trackerRecords
+        observations.insert(
+            CoreDataStorage.shared.observe(
+                \.trackerCategories,
+                 options: [.initial]
+            ) { [weak self] storage, _ in
+                self?.trackerCategories = storage.trackerCategories
+            }
+        )
         
-        view.backgroundColor = Colors.whiteDay
+        observations.insert(
+            CoreDataStorage.shared.observe(
+                \.trackerRecords,
+                 options: [.initial]
+            ) { [weak self] storage, _ in
+                self?.trackerRecords = storage.trackerRecords
+            }
+        )
+        
+        view.backgroundColor = Colors.white
+        collectionView.backgroundColor = Colors.white
         title = "Трекеры"
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
@@ -120,8 +139,8 @@ class TrackersMainViewController: UIViewController {
             
             let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusTapped))
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
-            navBar.topItem?.leftBarButtonItem?.tintColor = Colors.blackDay
-            navBar.backgroundColor = Colors.whiteDay
+            navBar.topItem?.leftBarButtonItem?.tintColor = Colors.black
+            navBar.backgroundColor = Colors.white
         }
         
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -172,13 +191,7 @@ class TrackersMainViewController: UIViewController {
     private func plusTapped() {
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.onNewTrackerCreated = { tracker in
-            guard let categoryIndex = Storage.trackerCategories.firstIndex(where: { category in
-                category.name == tracker.categoryTitle
-            }) else {
-                return
-            }
-            Storage.trackerCategories[categoryIndex].trackers.append(tracker)
-            self.trackerCategories = Storage.trackerCategories
+            try! CoreDataStorage.shared.add(tracker: tracker)
             addNewTrackerViewController.dismiss(animated: true)
         }
         present(addNewTrackerViewController, animated: true)
@@ -249,18 +262,16 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         
         trackerCell.doneButtonAction = { [self] in
             guard
-                tracker.daysOfWeek.contains(currentFilters.date.weekDay!) &&
-                    Calendar.current.isDateInToday(currentFilters.date)
+                tracker.daysOfWeek.contains(currentFilters.date.weekDay!)
             else {
                 return
             }
             let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
             if trackerRecords.contains(record) {
-                Storage.trackerRecords.removeAll { $0 == record }
+                try! CoreDataStorage.shared.delete(trackerRecord: record)
             } else {
-                Storage.trackerRecords.append(record)
+                try! CoreDataStorage.shared.add(trackerRecord: record)
             }
-            trackerRecords = Storage.trackerRecords
         }
         return trackerCell
     }
@@ -276,9 +287,7 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         else {
             return supplementaryView
         }
-        headerView.titleLabel.text = filteredTrackerCategories[indexPath.section].name
-        // TODO: - font
-//        headerView.titleLabel.font = UIFont(name: "", size: 30)
+        headerView.text = filteredTrackerCategories[indexPath.section].name
         return headerView
     }
 }
@@ -319,9 +328,8 @@ private extension TrackerCategory {
         let result = trackers.filter { tracker in
             let weekDay = filters.date.weekDay
             let containsWeekDay = weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
-            let isToday = Calendar.current.isDateInToday(filters.date)
             let containsText = filters.searchText == nil ? true : tracker.title.contains(filters.searchText!)
-            return (containsWeekDay || isToday) && containsText
+            return containsWeekDay && containsText
         }
         return result
     }

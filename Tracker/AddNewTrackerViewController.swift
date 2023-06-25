@@ -8,6 +8,7 @@ final class AddNewTrackerViewController: UIViewController {
         let addNewTrackerViewLabel = UILabel()
         addNewTrackerViewLabel.translatesAutoresizingMaskIntoConstraints = false
         addNewTrackerViewLabel.text = "Cоздание трекера"
+        addNewTrackerViewLabel.textColor = Colors.black
         return addNewTrackerViewLabel
     }()
     
@@ -16,27 +17,28 @@ final class AddNewTrackerViewController: UIViewController {
         habitButton.translatesAutoresizingMaskIntoConstraints = false
         habitButton.layer.masksToBounds = true
         habitButton.layer.cornerRadius = 16
+        habitButton.backgroundColor = Colors.black
+        habitButton.setTitleColor(Colors.white, for: .normal)
         habitButton.titleLabel?.font = UIFont(name: "SF Pro", size: 16)
         habitButton.setTitle("Привычка", for: .normal)
-        habitButton.backgroundColor = Colors.blackDay
         return habitButton
     }()
     
     private let irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
         irregularEventButton.translatesAutoresizingMaskIntoConstraints = false
-        irregularEventButton.tintColor = .black
+        irregularEventButton.setTitleColor(Colors.white, for: .normal)
+        irregularEventButton.backgroundColor = Colors.black
         irregularEventButton.layer.masksToBounds = true
         irregularEventButton.layer.cornerRadius = 16
         irregularEventButton.titleLabel?.font = UIFont(name: "SF Pro", size: 16)
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
-        irregularEventButton.backgroundColor = .black
         return irregularEventButton
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = Colors.white
         habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
         irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)
         
@@ -71,6 +73,7 @@ final class AddNewTrackerViewController: UIViewController {
             viewController.dismiss(animated: true)
             self.onNewTrackerCreated?(tracker)
         }
+        viewController.isModalInPresentation = true
         present(viewController, animated: true)
     }
     
@@ -81,6 +84,7 @@ final class AddNewTrackerViewController: UIViewController {
             viewController.dismiss(animated: true)
             self.onNewTrackerCreated?(tracker)
         }
+        viewController.isModalInPresentation = true
         present(viewController, animated: true)
     }
 }
