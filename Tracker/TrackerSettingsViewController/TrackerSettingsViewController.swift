@@ -44,7 +44,6 @@ final class TrackerSettingsViewController: UIViewController {
             attributes: [.foregroundColor: Colors.gray]
         )
         field.layer.cornerRadius = 16
-        field.heightAnchor.constraint(equalToConstant: 60).isActive = true
         field.clearButtonMode = .whileEditing
         return field
     }()
