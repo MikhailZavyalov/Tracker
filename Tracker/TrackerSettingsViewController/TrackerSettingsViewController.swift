@@ -267,15 +267,17 @@ extension TrackerSettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let categoryViewController = CategoryViewController()
-            categoryViewController.selectedCategory = currentSettings.categoryTitle
-            categoryViewController.onUserDidSelectCategory = { [weak categoryViewController] categoryTitle in
+            let model = CategoryListModel()
+            let viewModel = CategoryListViewModel(model: model)
+            viewModel.selectedCategory = currentSettings.categoryTitle
+            let categoryListViewController = CategoryListViewController(viewModel: viewModel)
+            categoryListViewController.onUserDidSelectCategory = { [weak categoryListViewController] categoryTitle in
                 self.habitTypeButtons[0].subTitle = categoryTitle
                 self.currentSettings.categoryTitle = categoryTitle
                 tableView.reloadData()
-                categoryViewController?.dismiss(animated: true)
+                categoryListViewController?.dismiss(animated: true)
             }
-            present(categoryViewController, animated: true)
+            present(categoryListViewController, animated: true)
         case 1:
             let scheduleViewController = ScheduleViewController(enabledWeekDays: currentSettings.daysOfWeek)
             scheduleViewController.onUserDidSelectSchedule = { [weak scheduleViewController] enabledDays in
