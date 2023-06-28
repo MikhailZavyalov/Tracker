@@ -80,24 +80,27 @@ class TrackersMainViewController: UIViewController {
     }()
     
     private var observations: Set<NSKeyValueObservation> = []
-    
+    private let storage: CoreDataStorageProtocol
+
+    init(storage: CoreDataStorageProtocol = CoreDataStorage.shared) {
+        self.storage = storage
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         observations.insert(
-            CoreDataStorage.shared.observe(
-                \.trackerCategories,
-                 options: [.initial]
-            ) { [weak self] storage, _ in
-                self?.trackerCategories = storage.trackerCategories
+            storage.observeTrackerCategories { [weak self] categories in
+                self?.trackerCategories = categories
             }
         )
-        
         observations.insert(
-            CoreDataStorage.shared.observe(
-                \.trackerRecords,
-                 options: [.initial]
-            ) { [weak self] storage, _ in
-                self?.trackerRecords = storage.trackerRecords
+            storage.observeTrackerRecords { [weak self] records in
+                self?.trackerRecords = records
             }
         )
         
@@ -202,8 +205,8 @@ class TrackersMainViewController: UIViewController {
     @objc
     private func plusTapped() {
         let addNewTrackerViewController = AddNewTrackerViewController()
-        addNewTrackerViewController.onNewTrackerCreated = { tracker in
-            try! CoreDataStorage.shared.add(tracker: tracker)
+        addNewTrackerViewController.onNewTrackerCreated = { [weak self] tracker in
+            try? self?.storage.add(tracker: tracker)
             addNewTrackerViewController.dismiss(animated: true)
         }
         present(addNewTrackerViewController, animated: true)
@@ -280,9 +283,9 @@ extension TrackersMainViewController: UICollectionViewDataSource {
             }
             let record = TrackerRecord(trackerId: tracker.id, date: currentFilters.date)
             if trackerRecords.contains(record) {
-                try! CoreDataStorage.shared.delete(trackerRecord: record)
+                try! storage.delete(trackerRecord: record)
             } else {
-                try! CoreDataStorage.shared.add(trackerRecord: record)
+                try! storage.add(trackerRecord: record)
             }
         }
         return trackerCell

@@ -2,11 +2,20 @@ import Foundation
 import UIKit
 import CoreData
 
+protocol CoreDataStorageProtocol: NSObject {
+    func observeTrackerCategories(onChange: @escaping ([TrackerCategory]) -> Void) -> NSKeyValueObservation
+    func observeTrackerRecords(onChange: @escaping ([TrackerRecord]) -> Void) -> NSKeyValueObservation
+
+    func add(tracker: Tracker) throws
+    func add(trackerRecord: TrackerRecord) throws
+    func delete(trackerRecord: TrackerRecord) throws
+}
+
 private enum CoreDataStorageError: Error {
     case invalidNSManagedObject(NSManagedObject)
 }
 
-final class CoreDataStorage: NSObject {
+final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
     static let shared = CoreDataStorage()
     
     @objc dynamic
@@ -150,5 +159,25 @@ extension TrackerRecordCoreData {
             trackerId: trackerId,
             date: date
         )
+    }
+}
+
+extension CoreDataStorage {
+    func observeTrackerCategories(onChange: @escaping ([TrackerCategory]) -> Void) -> NSKeyValueObservation {
+        observe(
+            \.trackerCategories,
+             options: [.initial]
+        ) { storage, _ in
+            onChange(storage.trackerCategories)
+        }
+    }
+
+    func observeTrackerRecords(onChange: @escaping ([TrackerRecord]) -> Void) -> NSKeyValueObservation {
+        observe(
+            \.trackerRecords,
+             options: [.initial]
+        ) { storage, _ in
+            onChange(storage.trackerRecords)
+        }
     }
 }
