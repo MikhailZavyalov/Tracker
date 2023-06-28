@@ -24,7 +24,8 @@ private class FakeCoreDataStorage: NSObject, CoreDataStorageProtocol {
                     emoji: "🥃",
                     categoryTitle: "Test123123",
                     daysOfWeek: [Date().weekDay!],
-                    creationDate: Date()
+                    creationDate: Date(),
+                    isPinned: false
                 )
             ]
         )

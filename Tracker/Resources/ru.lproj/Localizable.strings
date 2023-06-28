@@ -5,6 +5,14 @@
 "TrackersMainVC.clearSearchField.title" = "Отменить";
 "TrackersMainVC.emptyStateView.title" = "Что будем отслеживать?";
 "TrackersMainVC.emptyStateView.emptyTitle" = "Ничего не найдено";
+"TrackersMainVC.deleteTrackerAlert.message" = "Уверены что хотите удалить трекер?";
+"TrackersMainVC.deleteTrackerAlert.delete" = "Удалить";
+"TrackersMainVC.deleteTrackerAlert.cancel" = "Отменить";
+"TrackersMainVC.pinnedSection.title" = "Закреплённые";
+"TrackersMainVC.contextMenu.pin" = "Закрепить";
+"TrackersMainVC.contextMenu.unpin" = "Открепить";
+"TrackersMainVC.contextMenu.edit" = "Редактировать";
+"TrackersMainVC.contextMenu.delete" = "Удалить";
 
 "TrackerCollectionViewCell.dataLabel.text" = "%d дней";
 

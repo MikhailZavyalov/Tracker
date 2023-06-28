@@ -11,8 +11,9 @@ final class TrackerSettingsViewController: UIViewController {
     
     let trackersMainViewController = TrackersMainViewController()
     var onNewTrackerCreated: ((Tracker) -> Void)?
-    
-    private var currentSettings: TrackerSettings = .empty {
+
+    private var isEditingTracker: Bool
+    private var currentSettings: TrackerSettings {
         didSet {
             updateUI()
         }
@@ -24,13 +25,20 @@ final class TrackerSettingsViewController: UIViewController {
     ]
     
     private let scrollView = UIScrollView()
-    
-    private let label: UILabel = {
+
+    private let titleLabel: UILabel = {
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.text = "Новая привычка"
         title.textColor = Colors.black
-        title.font = UIFont(name: "SF Pro", size: 16)
+        title.font = .systemFont(ofSize: 16, weight: .medium)
+        return title
+    }()
+
+    private let daysCountLabel: UILabel = {
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.textColor = Colors.black
+        title.font = .systemFont(ofSize: 32, weight: .bold)
         return title
     }()
     
@@ -90,10 +98,42 @@ final class TrackerSettingsViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: Const.bottomButtonsHeight).isActive = true
         return button
     }()
-    
+
+    init(editingTracker: Tracker? = nil) {
+        isEditingTracker = editingTracker != nil
+        if let editingTracker {
+            currentSettings = TrackerSettings(
+                color: editingTracker.color,
+                title: editingTracker.title,
+                emoji: editingTracker.emoji,
+                categoryTitle: editingTracker.categoryTitle,
+                daysOfWeek: editingTracker.daysOfWeek
+            )
+
+            textField.text = editingTracker.title
+            habitTypeButtons[0].subTitle = editingTracker.categoryTitle
+            habitTypeButtons[1].subTitle = subtitleFrom(enabledDays: editingTracker.daysOfWeek)
+        } else {
+            currentSettings = .empty
+        }
+        super.init(nibName: nil, bundle: nil)
+
+        guard let editingTracker else { return }
+        let daysCount = CoreDataStorage.shared.trackerRecords.filter { $0.trackerId == editingTracker.id }.count
+        daysCountLabel.text = "\(daysCount) дней"
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Colors.white
+
+        titleLabel.text = isEditingTracker ? "Редактирование привычки" : "Новая привычка"
+        daysCountLabel.isHidden = !isEditingTracker
+
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
         categoryAndScheduleTableView.register(TrackerSettingsTableViewCell.self, forCellReuseIdentifier: TrackerSettingsTableViewCell.reuseID)
@@ -133,9 +173,14 @@ final class TrackerSettingsViewController: UIViewController {
         
         scrollView.addSubview(categoryAndScheduleTableView)
         categoryAndScheduleTableView.translatesAutoresizingMaskIntoConstraints = false
+
+        let titleStack = UIStackView(arrangedSubviews: [titleLabel, daysCountLabel])
+        titleStack.axis = .vertical
+        titleStack.spacing = 38
+        titleStack.alignment = .center
+        titleStack.translatesAutoresizingMaskIntoConstraints = false
         
-        scrollView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(titleStack)
         
         scrollView.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -168,10 +213,10 @@ final class TrackerSettingsViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             
-            label.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 20),
-            label.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            titleStack.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 20),
+            titleStack.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             
-            textField.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
+            textField.topAnchor.constraint(equalTo: titleStack.bottomAnchor, constant: 30),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -266,6 +311,9 @@ extension TrackerSettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
+            // TODO: - Implement category change for a tracker
+            if isEditingTracker { return }
+
             let model = CategoryListModel()
             let viewModel = CategoryListViewModel(model: model)
             viewModel.selectedCategory = currentSettings.categoryTitle
@@ -281,14 +329,7 @@ extension TrackerSettingsViewController: UITableViewDelegate {
             let scheduleViewController = ScheduleViewController(enabledWeekDays: currentSettings.daysOfWeek)
             scheduleViewController.onUserDidSelectSchedule = { [weak scheduleViewController] enabledDays in
                 self.currentSettings.daysOfWeek = enabledDays
-                if enabledDays == Set(Tracker.WeekDay.allCases) {
-                    self.habitTypeButtons[1].subTitle = "Каждый день"
-                } else {
-                    self.habitTypeButtons[1].subTitle = enabledDays
-                        .map {
-                            $0.shortName
-                        }.joined(separator: ", ")
-                }
+                self.habitTypeButtons[1].subTitle = subtitleFrom(enabledDays: enabledDays)
                 tableView.reloadData()
                 scheduleViewController?.dismiss(animated: true)
             }
@@ -317,5 +358,16 @@ struct TrackerSettingsViewController_Previews: PreviewProvider {
         let vc = TrackerSettingsViewController()
         
         return UIViewRepresented(makeUIView: { _ in vc.view })
+    }
+}
+
+private func subtitleFrom(enabledDays: Set<Tracker.WeekDay>) -> String {
+    if enabledDays == Set(Tracker.WeekDay.allCases) {
+        return "Каждый день"
+    } else {
+        return enabledDays
+            .map {
+                $0.shortName
+            }.joined(separator: ", ")
     }
 }

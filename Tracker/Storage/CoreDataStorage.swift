@@ -9,10 +9,13 @@ protocol CoreDataStorageProtocol: NSObject {
     func add(tracker: Tracker) throws
     func add(trackerRecord: TrackerRecord) throws
     func delete(trackerRecord: TrackerRecord) throws
+    func delete(tracker: Tracker) throws
+    func overwriteTracker(tracker: Tracker) throws
 }
 
 private enum CoreDataStorageError: Error {
     case invalidNSManagedObject(NSManagedObject)
+    case entityWithSpecifiedIdNotFound
 }
 
 final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
@@ -38,12 +41,7 @@ final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
     
     func add(tracker: Tracker) throws {
         let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.color = try JSONEncoder().encode(tracker.color)
-        trackerCoreData.daysOfWeek = try JSONEncoder().encode(tracker.daysOfWeek)
-        trackerCoreData.trackerId = tracker.id
-        trackerCoreData.title = tracker.title
-        trackerCoreData.creationDate = tracker.creationDate
+        try copyProperties(from: tracker, to: trackerCoreData)
         trackerCoreData.records = []
         
         let categories = try fetchCategories()
@@ -76,10 +74,9 @@ final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
         }
 
         try context.save()
-        
         try updateData()
     }
-    
+
     func delete(trackerRecord: TrackerRecord) throws {
         let records = try fetchRecords()
         let record = records.first {
@@ -88,6 +85,40 @@ final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
         }
         context.delete(record!)
         try updateData()
+    }
+
+    func delete(tracker: Tracker) throws {
+        let trackers = try fetchTrackers()
+        guard let trackerCoreData = trackers.first(where: {
+            $0.trackerId == tracker.id
+        }) else {
+            throw CoreDataStorageError.entityWithSpecifiedIdNotFound
+        }
+        context.delete(trackerCoreData)
+        try updateData()
+    }
+
+    func overwriteTracker(tracker: Tracker) throws {
+        let trackers = try fetchTrackers()
+        guard let trackerCoreData = trackers.first(where: {
+            $0.trackerId == tracker.id
+        }) else {
+            throw CoreDataStorageError.entityWithSpecifiedIdNotFound
+        }
+        try copyProperties(from: tracker, to: trackerCoreData)
+
+        try context.save()
+        try updateData()
+    }
+
+    private func copyProperties(from tracker: Tracker, to trackerCoreData: TrackerCoreData) throws {
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.color = try JSONEncoder().encode(tracker.color)
+        trackerCoreData.daysOfWeek = try JSONEncoder().encode(tracker.daysOfWeek)
+        trackerCoreData.trackerId = tracker.id
+        trackerCoreData.title = tracker.title
+        trackerCoreData.creationDate = tracker.creationDate
+        trackerCoreData.isPinned = tracker.isPinned
     }
     
     private func updateData() throws {
@@ -133,7 +164,8 @@ extension TrackerCoreData {
             emoji: emoji,
             categoryTitle: categoryTitle,
             daysOfWeek: try JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek),
-            creationDate: creationDate
+            creationDate: creationDate,
+            isPinned: isPinned
         )
     }
 }

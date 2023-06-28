@@ -24,14 +24,21 @@ class TrackersMainViewController: UIViewController {
             updateUI()
         }
     }
+
+    private var pinnedPseudoCategory: [TrackerCategory] {
+        let pinned = trackerCategories.flatMap { $0.trackers }.filter { $0.isPinned }
+        let category = TrackerPseudoCategory(name: "TrackersMainVC.pinnedSection.title".localized, trackers: pinned)
+        return category.trackers.isEmpty ? [] : [category]
+    }
     
     private var visibleTrackerCategories: [TrackerCategory] {
+        pinnedPseudoCategory +
         trackerCategories.filter { !$0.visibleTrackers(using: Filters(date: currentFilters.date)).isEmpty }
     }
     
     private var filteredTrackerCategories: [TrackerCategory] {
-        trackerCategories.filter { !$0.visibleTrackers(using: currentFilters).isEmpty
-        }
+        pinnedPseudoCategory +
+        trackerCategories.filter { !$0.visibleTrackers(using: currentFilters).isEmpty }
     }
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -162,17 +169,58 @@ class TrackersMainViewController: UIViewController {
     }
 
     private func pinTracker(indexPath: IndexPath) {
-
+        let tracker = visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
+        tracker.isPinned.toggle()
+        try? storage.overwriteTracker(tracker: tracker)
     }
 
     private func editTracker(indexPath: IndexPath) {
         let params = EventParams(event: .click, screen: .main, item: .edit)
         Analytics.sendEvent(.mainScreenContextMenuEditTap, params: params)
+
+        let tracker = visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
+        let trackerSettingsVC = TrackerSettingsViewController(editingTracker: tracker)
+        trackerSettingsVC.onNewTrackerCreated = { [weak self, weak trackerSettingsVC] updatedTracker in
+            // FIXME: - Not working for some reason
+            try? self?.storage.overwriteTracker(tracker: updatedTracker)
+            trackerSettingsVC?.dismiss(animated: true)
+        }
+        present(trackerSettingsVC, animated: true)
     }
 
     private func deleteTracker(indexPath: IndexPath) {
         let params = EventParams(event: .click, screen: .main, item: .delete)
         Analytics.sendEvent(.mainScreenContextMenuDeleteTap, params: params)
+
+        let alert = UIAlertController(
+            title: nil,
+            message: "TrackersMainVC.deleteTrackerAlert.message".localized,
+            preferredStyle: .actionSheet
+        )
+
+        let deleteAction = UIAlertAction(
+            title: "TrackersMainVC.deleteTrackerAlert.delete".localized,
+            style: .destructive
+        ) { [weak self] _ in
+            alert.dismiss(animated: true)
+            guard let self else { return }
+            try? self.storage.delete(
+                tracker: self.visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
+            )
+        }
+
+        let cancelAction = UIAlertAction(
+            title: "TrackersMainVC.deleteTrackerAlert.cancel".localized,
+            style: .cancel
+        ) { _ in
+            alert.dismiss(animated: true)
+        }
+
+        [deleteAction, cancelAction].forEach {
+            alert.addAction($0)
+        }
+
+        present(alert, animated: true)
     }
     
     private func setupConstraints() {
@@ -365,15 +413,19 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
 
         let indexPath = indexPaths[0]
 
+        let pinned = visibleTrackerCategories[indexPath.section].trackers[indexPath.row].isPinned
+        ? "TrackersMainVC.contextMenu.unpin".localized
+        : "TrackersMainVC.contextMenu.pin".localized
+
         return UIContextMenuConfiguration(actionProvider: { actions in
             return UIMenu(children: [
-                UIAction(title: "Закрепить") { [weak self] _ in
+                UIAction(title: pinned) { [weak self] _ in
                     self?.pinTracker(indexPath: indexPath)
                 },
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: "TrackersMainVC.contextMenu.edit".localized) { [weak self] _ in
                     self?.editTracker(indexPath: indexPath)
                 },
-                UIAction(title: "Удалить") { [weak self] _ in
+                UIAction(title: "TrackersMainVC.contextMenu.delete".localized) { [weak self] _ in
                     self?.deleteTracker(indexPath: indexPath)
                 },
             ])
@@ -383,11 +435,15 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
 
 private extension TrackerCategory {
     func visibleTrackers(using filters: TrackersMainViewController.Filters) -> [Tracker] {
+        guard !(self is TrackerPseudoCategory) else {
+            return trackers
+        }
+
         let result = trackers.filter { tracker in
             let weekDay = filters.date.weekDay
             let containsWeekDay = weekDay == nil ? false : tracker.daysOfWeek.contains(weekDay!)
             let containsText = filters.searchText == nil ? true : tracker.title.contains(filters.searchText!)
-            return containsWeekDay && containsText
+            return containsWeekDay && containsText && !tracker.isPinned
         }
         return result
     }

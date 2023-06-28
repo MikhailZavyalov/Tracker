@@ -28,7 +28,8 @@ struct TrackerSettings {
             emoji: emoji,
             categoryTitle: categoryTitle,
             daysOfWeek: daysOfWeek,
-            creationDate: Date()
+            creationDate: Date(),
+            isPinned: false
         )
     }
 }

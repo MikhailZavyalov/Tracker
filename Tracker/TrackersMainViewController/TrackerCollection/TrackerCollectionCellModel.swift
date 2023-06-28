@@ -5,6 +5,7 @@ struct TrackerCollectionCellModel {
     let title: String
     let emoji: String
     let daysCompleted: Int
+    let isPinned: Bool
     var isCompleted: Bool
 }
 
@@ -13,6 +14,7 @@ extension TrackerCollectionCellModel {
         self.color = tracker.color.uiColor
         self.title = tracker.title
         self.emoji = tracker.emoji
+        self.isPinned = tracker.isPinned
      
         var isCompleted = false
         for record in trackerRecords {

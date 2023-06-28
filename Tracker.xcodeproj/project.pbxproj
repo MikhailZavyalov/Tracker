@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A2FEAE09B988F82F9ADDB25E /* Pods_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB9448A48F576F0AC050D8C1 /* Pods_Tracker.framework */; };
+		C13F2DB22A4CE436008C6A57 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13F2DB12A4CE436008C6A57 /* StatsView.swift */; };
 		C190F8F42A18E42800D86F34 /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C190F8F32A18E42800D86F34 /* CategoryListViewController.swift */; };
 		C1A6F59C2A0A679800828D6A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C1A6F59B2A0A679800828D6A /* LaunchScreen.storyboard */; };
 		C1A6F5A02A0AAB1D00828D6A /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A6F59F2A0AAB1D00828D6A /* TrackerCollectionViewCell.swift */; };
@@ -80,6 +81,7 @@
 		836248BA4AB2F5B68162EC1B /* Pods-Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.debug.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		9ABC0033EC3C41C1A6800093 /* Pods-TrackerSnapshotTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrackerSnapshotTests.release.xcconfig"; path = "Target Support Files/Pods-TrackerSnapshotTests/Pods-TrackerSnapshotTests.release.xcconfig"; sourceTree = "<group>"; };
 		BC4F49EADDD633523B633FC7 /* Pods-Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.release.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.release.xcconfig"; sourceTree = "<group>"; };
+		C13F2DB12A4CE436008C6A57 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		C190F8F32A18E42800D86F34 /* CategoryListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
 		C1A6F59B2A0A679800828D6A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C1A6F59F2A0AAB1D00828D6A /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -180,6 +182,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		C13F2DB02A4CE426008C6A57 /* StatisticsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				C1E838442A0EC71700E1D2A9 /* StatisticsViewController.swift */,
+				C13F2DB12A4CE436008C6A57 /* StatsView.swift */,
+			);
+			path = StatisticsScreen;
+			sourceTree = "<group>";
+		};
 		C1AD4F6F2A0018730066D64B = {
 			isa = PBXGroup;
 			children = (
@@ -211,7 +222,7 @@
 				C1C32E0A2A2BA2540098B9B4 /* EmptyStateView.swift */,
 				C1BBAA322A489CFA00E25122 /* Onboarding */,
 				C1B64ED42A225C650039E29E /* TrackersMainViewController */,
-				C1E838442A0EC71700E1D2A9 /* StatisticsViewController.swift */,
+				C13F2DB02A4CE426008C6A57 /* StatisticsScreen */,
 				C1D018F92A101654004B1E35 /* AddNewTrackerViewController.swift */,
 				C1BC70D62A1E416D00DAC570 /* TrackerSettingsViewController */,
 				C1CB3E1A2A1D316C00EF62AB /* CategoryList */,
@@ -618,6 +629,7 @@
 				C1BED1A22A12A45E008B7D62 /* UIViewRepresented.swift in Sources */,
 				C1BBAA5F2A4A022E00E25122 /* CategoryListViewModel.swift in Sources */,
 				C1CCEAD82A0BDBAD00007FD8 /* UICollectionViewCell+ReuseID.swift in Sources */,
+				C13F2DB22A4CE436008C6A57 /* StatsView.swift in Sources */,
 				C1C642B12A1FC7CF0074A690 /* TrackerSettings.swift in Sources */,
 				C1BBAA612A4A031600E25122 /* Observable.swift in Sources */,
 				C1C5416A2A3E3232002D7070 /* PickerFlowLayout.swift in Sources */,

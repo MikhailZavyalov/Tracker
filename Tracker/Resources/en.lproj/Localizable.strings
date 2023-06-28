@@ -5,6 +5,14 @@
 "TrackersMainVC.clearSearchField.title" = "Cancel";
 "TrackersMainVC.emptyStateView.title" = "What will we track?";
 "TrackersMainVC.emptyStateView.emptyTitle" = "Nothing found";
+"TrackersMainVC.deleteTrackerAlert.message" = "Are you sure you want to delete the tracker?";
+"TrackersMainVC.deleteTrackerAlert.delete" = "Delete";
+"TrackersMainVC.deleteTrackerAlert.cancel" = "Cancel";
+"TrackersMainVC.pinnedSection.title" = "Pinned";
+"TrackersMainVC.contextMenu.pin" = "Pin";
+"TrackersMainVC.contextMenu.unpin" = "Unpin";
+"TrackersMainVC.contextMenu.edit" = "Edit";
+"TrackersMainVC.contextMenu.delete" = "Delete";
 
 "TrackerCollectionViewCell.dataLabel.text" = "%d days";
 
