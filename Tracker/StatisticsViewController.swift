@@ -9,7 +9,6 @@ final class StatisticsViewController: UIViewController {
         label.textColor = Colors.black
         label.font = .boldSystemFont(ofSize: 34)
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        print(label.font.fontName)
         return label
     }()
     

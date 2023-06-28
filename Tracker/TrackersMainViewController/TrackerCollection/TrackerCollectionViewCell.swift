@@ -43,7 +43,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         
-        NSLayoutConstraint.activate([
+        let constraints = [
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
             colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -65,7 +65,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             doneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             doneButton.heightAnchor.constraint(equalToConstant: 34),
             doneButton.widthAnchor.constraint(equalToConstant: 34),
-        ])
+        ]
+
+        constraints.forEach {
+            $0.priority = .defaultHigh
+        }
+
+        NSLayoutConstraint.activate(constraints)
     }
     
     required init?(coder: NSCoder) {

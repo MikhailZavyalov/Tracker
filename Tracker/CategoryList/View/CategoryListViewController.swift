@@ -1,14 +1,12 @@
 import UIKit
 import SwiftUI
 
-final class CategoryViewController: UIViewController {
+final class CategoryListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var onUserDidSelectCategory: ((String) -> Void)?
-    var selectedCategory: String?
-    
-    private var allCategories: [CategoryCellModel] = [] {
-        didSet {
-            updateUI()
-        }
+
+    private let viewModel: CategoryListViewModel
+    private var allCategories: [CategoryCellViewModel] {
+        viewModel.allCategories
     }
     
     private let label: UILabel = {
@@ -43,20 +41,22 @@ final class CategoryViewController: UIViewController {
         view.text = "Привычки и события можно объединить по смыслу"
         return view
     }()
+
+    init(viewModel: CategoryListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        viewModel.$allCategories.bind(executeInitially: true) { [weak self] _ in
+            self?.updateUI()
+        }
+    }
     
-    private var observation: NSKeyValueObservation?
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Colors.white
-        observation = CoreDataStorage.shared.observe(
-            \.trackerCategories,
-             options: [.initial]
-        ) { [weak self] storage, _ in
-            self?.allCategories = storage.trackerCategories.map {
-                CategoryCellModel(title: $0.name, isSelected: $0.name == self?.selectedCategory)
-            }
-        }
         
         categoriesTableView.dataSource = self
         categoriesTableView.delegate = self
@@ -102,28 +102,16 @@ final class CategoryViewController: UIViewController {
     @objc func addCategory() {
         let viewController = NewCategoryViewController()
         viewController.onUserDidAddNewCategory = { [weak self] categoryTitle in
-            guard let self = self else { return }
-            defer { self.updateUI() }
-            
             viewController.dismiss(animated: true)
-            
-            for i in 0..<self.allCategories.count {
-                self.allCategories[i].isSelected = false
-            }
-            
-            if let existingCategoryIndex = self.allCategories.firstIndex(where: { $0.title == categoryTitle }) {
-                self.allCategories[existingCategoryIndex].isSelected = true
-                return
-            }
-            
-            self.selectedCategory = categoryTitle
-            try! CoreDataStorage.shared.add(trackerCategory: TrackerCategory(name: categoryTitle, trackers: []))
+            self?.viewModel.addCategory(categoryTitle: categoryTitle)
         }
         present(viewController, animated: true)
     }
 }
 
-extension CategoryViewController: UITableViewDataSource {
+// MARK: - UITableViewDataSource
+
+extension CategoryListViewController {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allCategories.count
     }
@@ -140,19 +128,24 @@ extension CategoryViewController: UITableViewDataSource {
     }
 }
 
-extension CategoryViewController: UITableViewDelegate {
+// MARK: - UITableViewDelegate
+
+extension CategoryListViewController {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         onUserDidSelectCategory?(allCategories[indexPath.row].title)
+        viewModel.userDidSelectCategory(categoryTitle: allCategories[indexPath.row].title)
     }
 }
 
 struct CategoryViewController_Previews: PreviewProvider {
     static var previews: some View {
-        let vc = CategoryViewController()
+        let model = CategoryListModel()
+        let viewModel = CategoryListViewModel(model: model)
+        let vc = CategoryListViewController(viewModel: viewModel)
         
         return UIViewRepresented(makeUIView: { _ in vc.view })
     }

@@ -1,6 +1,7 @@
 import UIKit
 
 final class CategoryTableViewCell: UITableViewCell {
+    private var viewModel: CategoryCellViewModel?
     private let titleLabel = UILabel()
     
     private let accessoryImageView: UIImageView = {
@@ -58,10 +59,19 @@ final class CategoryTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate(constraints)
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        viewModel?.$isSelected.unbind()
+        viewModel = nil
+    }
     
-    func configure(with model: CategoryCellModel, isFirst: Bool, isLast: Bool) {
-        titleLabel.text = model.title
-        accessoryImageView.isHidden = !model.isSelected
+    func configure(with viewModel: CategoryCellViewModel, isFirst: Bool, isLast: Bool) {
+        self.viewModel = viewModel
+        titleLabel.text = viewModel.title
+        viewModel.$isSelected.bind(executeInitially: true) { [weak self] isSelected in
+            self?.accessoryImageView.isHidden = !isSelected
+        }
         separator.isHidden = false
         contentView.layer.maskedCorners = []
         if isFirst {
