@@ -121,6 +121,18 @@ class TrackersMainViewController: UIViewController {
         setupConstraints()
         updateUI()
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let params = EventParams(event: .open, screen: .main)
+        Analytics.sendEvent(.mainScreenShow, params: params)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let params = EventParams(event: .close, screen: .main)
+        Analytics.sendEvent(.mainScreenClose, params: params)
+    }
     
     private func updateUI() {
         collectionView.reloadData()
@@ -154,11 +166,13 @@ class TrackersMainViewController: UIViewController {
     }
 
     private func editTracker(indexPath: IndexPath) {
-
+        let params = EventParams(event: .click, screen: .main, item: .edit)
+        Analytics.sendEvent(.mainScreenContextMenuEditTap, params: params)
     }
 
     private func deleteTracker(indexPath: IndexPath) {
-
+        let params = EventParams(event: .click, screen: .main, item: .delete)
+        Analytics.sendEvent(.mainScreenContextMenuDeleteTap, params: params)
     }
     
     private func setupConstraints() {
@@ -204,6 +218,8 @@ class TrackersMainViewController: UIViewController {
     
     @objc
     private func plusTapped() {
+        let params = EventParams(event: .click, screen: .main, item: .addTrack)
+        Analytics.sendEvent(.mainScreenAddTrackerTap, params: params)
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.onNewTrackerCreated = { [weak self] tracker in
             try? self?.storage.add(tracker: tracker)
@@ -227,6 +243,8 @@ class TrackersMainViewController: UIViewController {
     
     @objc
     private func textFieldDidBeginEditing() {
+        let params = EventParams(event: .click, screen: .main, item: .filter)
+        Analytics.sendEvent(.mainScreenFilterTap, params: params)
         clearSearchFieldButton.isHidden = false
     }
     
@@ -276,6 +294,9 @@ extension TrackersMainViewController: UICollectionViewDataSource {
         trackerCell.configureWith(model: model)
         
         trackerCell.doneButtonAction = { [self] in
+            let params = EventParams(event: .click, screen: .main, item: .track)
+            Analytics.sendEvent(.mainScreenTrackerTap, params: params)
+
             guard
                 tracker.daysOfWeek.contains(currentFilters.date.weekDay!)
             else {

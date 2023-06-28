@@ -9,3 +9,5 @@
 "TrackerCollectionViewCell.dataLabel.text" = "%d days";
 
 "StatisticsVC.title" = "Statistics";
+
+"addNewTrackerViewLabel.text" = "Create a new tracker";
