@@ -1,0 +1,11 @@
+"AddNewTrackerScrene.addNewTracker.text" = "What will we track?";
+
+"TrackersMainVC.title" = "Trackers";
+"TrackersMainVC.searchField.placeHolder" = "Search";
+"TrackersMainVC.clearSearchField.title" = "Cancel";
+"TrackersMainVC.emptyStateView.title" = "What will we track?";
+"TrackersMainVC.emptyStateView.emptyTitle" = "Nothing found";
+
+"TrackerCollectionViewCell.dataLabel.text" = "%d days";
+
+"StatisticsVC.title" = "Statistics";

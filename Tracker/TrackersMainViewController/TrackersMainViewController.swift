@@ -48,7 +48,7 @@ class TrackersMainViewController: UIViewController {
     
     private let uiSearchTextField: UISearchTextField = {
         let uiSearchTextField = UISearchTextField()
-        uiSearchTextField.placeholder = "Поиск"
+        uiSearchTextField.placeholder = "TrackersMainVC.searchField.placeHolder".localized
         uiSearchTextField.clearButtonMode = .never
         uiSearchTextField.tintColor = Colors.black
         return uiSearchTextField
@@ -56,7 +56,7 @@ class TrackersMainViewController: UIViewController {
     
     private let clearSearchFieldButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle("TrackersMainVC.clearSearchField.title".localized, for: .normal)
         button.backgroundColor = Colors.white
         button.setTitleColor(Colors.blue, for: .normal)
         button.titleLabel?.font = UIFont(name: "SF Pro", size: 17)
@@ -67,7 +67,7 @@ class TrackersMainViewController: UIViewController {
     private let emptyStateView: EmptyStateView = {
         let view = EmptyStateView()
         view.image = UIImage(named: "trackersIsEmptyLogo")
-        view.text = "Что будем отслеживать?"
+        view.text = "TrackersMainVC.emptyStateView.title".localized
         return view
     }()
     
@@ -103,7 +103,7 @@ class TrackersMainViewController: UIViewController {
         
         view.backgroundColor = Colors.white
         collectionView.backgroundColor = Colors.white
-        title = "Трекеры"
+        title = "TrackersMainVC.title".localized
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSectionHeaderView.reuseID)
         collectionView.dataSource = self
@@ -124,10 +124,10 @@ class TrackersMainViewController: UIViewController {
         emptyStateView.isHidden = !filteredTrackerCategories.isEmpty
         if filteredTrackerCategories.isEmpty && !visibleTrackerCategories.isEmpty {
             emptyStateView.image = UIImage(named: "2")
-            emptyStateView.text = "Ничего не найдено"
+            emptyStateView.text = "TrackersMainVC.emptyStateView.emptyTitle".localized
         } else {
             emptyStateView.image = UIImage(named: "trackersIsEmptyLogo")
-            emptyStateView.text = "Что будем отслеживать?"
+            emptyStateView.text = "TrackersMainVC.emptyStateView.title".localized
         }
     }
     
@@ -144,6 +144,18 @@ class TrackersMainViewController: UIViewController {
         }
         
         navigationController?.navigationBar.prefersLargeTitles = true
+    }
+
+    private func pinTracker(indexPath: IndexPath) {
+
+    }
+
+    private func editTracker(indexPath: IndexPath) {
+
+    }
+
+    private func deleteTracker(indexPath: IndexPath) {
+
     }
     
     private func setupConstraints() {
@@ -320,6 +332,28 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return geometricParams.cellSpacing
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard indexPaths.count > 0 else {
+            return nil
+        }
+
+        let indexPath = indexPaths[0]
+
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [
+                UIAction(title: "Закрепить") { [weak self] _ in
+                    self?.pinTracker(indexPath: indexPath)
+                },
+                UIAction(title: "Редактировать") { [weak self] _ in
+                    self?.editTracker(indexPath: indexPath)
+                },
+                UIAction(title: "Удалить") { [weak self] _ in
+                    self?.deleteTracker(indexPath: indexPath)
+                },
+            ])
+        })
     }
 }
 

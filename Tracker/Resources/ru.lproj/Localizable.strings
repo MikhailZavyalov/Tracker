@@ -1,0 +1,11 @@
+"AddNewTrackerScrene.addNewTracker.text" = "Что будем отслеживать?";
+
+"TrackersMainVC.title" = "Трекеры";
+"TrackersMainVC.searchField.placeHolder" = "Поиск";
+"TrackersMainVC.clearSearchField.title" = "Отменить";
+"TrackersMainVC.emptyStateView.title" = "Что будем отслеживать?";
+"TrackersMainVC.emptyStateView.emptyTitle" = "Ничего не найдено";
+
+"TrackerCollectionViewCell.dataLabel.text" = "%d дней";
+
+"StatisticsVC.title" = "Статистика";

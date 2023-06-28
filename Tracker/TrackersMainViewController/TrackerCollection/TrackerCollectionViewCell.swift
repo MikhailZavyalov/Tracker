@@ -82,7 +82,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         titleLabel.text = model.title
         colorView.backgroundColor = model.color
         emojiLabel.text = model.emoji
-        dateLabel.text = "\(model.daysCompleted) дней"
+        dateLabel.text = String(format: "TrackerCollectionViewCell.dataLabel.text".localized, model.daysCompleted)
         doneButton.setImage(model.isCompleted ? UIImage(named: "done") : UIImage(named: "plus [black]"), for: .normal)
         doneButton.backgroundColor = model.isCompleted ? model.color.withAlphaComponent(0.7) : model.color
     }
