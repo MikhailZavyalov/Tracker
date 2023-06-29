@@ -12,7 +12,7 @@ final class TrackerSettingsViewController: UIViewController {
     let trackersMainViewController = TrackersMainViewController()
     var onNewTrackerCreated: ((Tracker) -> Void)?
 
-    private var isEditingTracker: Bool
+    private var editingTracker: Tracker?
     private var currentSettings: TrackerSettings {
         didSet {
             updateUI()
@@ -100,7 +100,7 @@ final class TrackerSettingsViewController: UIViewController {
     }()
 
     init(editingTracker: Tracker? = nil) {
-        isEditingTracker = editingTracker != nil
+        self.editingTracker = editingTracker
         if let editingTracker {
             currentSettings = TrackerSettings(
                 color: editingTracker.color,
@@ -113,6 +113,8 @@ final class TrackerSettingsViewController: UIViewController {
             textField.text = editingTracker.title
             habitTypeButtons[0].subTitle = editingTracker.categoryTitle
             habitTypeButtons[1].subTitle = subtitleFrom(enabledDays: editingTracker.daysOfWeek)
+            emojiPicker.selectEmoji(editingTracker.emoji)
+            colorPicker.selectColor(editingTracker.color.uiColor)
         } else {
             currentSettings = .empty
         }
@@ -131,8 +133,8 @@ final class TrackerSettingsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = Colors.white
 
-        titleLabel.text = isEditingTracker ? "Редактирование привычки" : "Новая привычка"
-        daysCountLabel.isHidden = !isEditingTracker
+        titleLabel.text = editingTracker != nil ? "Редактирование привычки" : "Новая привычка"
+        daysCountLabel.isHidden = editingTracker == nil
 
         categoryAndScheduleTableView.dataSource = self
         categoryAndScheduleTableView.delegate = self
@@ -257,7 +259,14 @@ final class TrackerSettingsViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        guard let tracker = currentSettings.makeTracker() else { return }
+        let tracker: Tracker
+        if let editingTracker {
+            tracker = editingTracker
+            currentSettings.editTracker(tracker)
+        } else {
+            guard let newTracker = currentSettings.makeTracker() else { return }
+            tracker = newTracker
+        }
         onNewTrackerCreated?(tracker)
     }
     
@@ -274,7 +283,7 @@ final class TrackerSettingsViewController: UIViewController {
             createButton.backgroundColor = Colors.gray
             createButton.isUserInteractionEnabled = false
         }
-        //        textLimitHint.isHidden = textField.text?.count != 38
+//        textLimitHint.isHidden = textField.text?.count != 38
     }
     
     private static func calculateEmojiPickerHeight() -> CGFloat {
@@ -312,7 +321,7 @@ extension TrackerSettingsViewController: UITableViewDelegate {
         switch indexPath.row {
         case 0:
             // TODO: - Implement category change for a tracker
-            if isEditingTracker { return }
+            if editingTracker != nil { return }
 
             let model = CategoryListModel()
             let viewModel = CategoryListViewModel(model: model)

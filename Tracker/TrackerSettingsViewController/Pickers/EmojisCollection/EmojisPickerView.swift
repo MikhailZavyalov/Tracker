@@ -40,6 +40,13 @@ final class EmojisPickerView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    func selectEmoji(_ emoji: String, animated: Bool = false) {
+        guard let index = emojiCellModels.firstIndex(where: { $0.emoji == emoji }) else {
+            return
+        }
+        collectionView.selectItem(at: IndexPath(item: index, section: 0), animated: animated, scrollPosition: .centeredHorizontally)
+    }
     
     private func setupConstraints() {
         addSubview(collectionView)

@@ -181,7 +181,6 @@ class TrackersMainViewController: UIViewController {
         let tracker = visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
         let trackerSettingsVC = TrackerSettingsViewController(editingTracker: tracker)
         trackerSettingsVC.onNewTrackerCreated = { [weak self, weak trackerSettingsVC] updatedTracker in
-            // FIXME: - Not working for some reason
             try? self?.storage.overwriteTracker(tracker: updatedTracker)
             trackerSettingsVC?.dismiss(animated: true)
         }

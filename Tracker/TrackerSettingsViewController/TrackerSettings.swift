@@ -32,4 +32,24 @@ struct TrackerSettings {
             isPinned: false
         )
     }
+
+    func editTracker(_ tracker: Tracker) {
+        if let color {
+            tracker.color = color
+        }
+
+        if let title, !title.isEmpty {
+            tracker.title = title
+        }
+
+        if let emoji, !emoji.isEmpty {
+            tracker.emoji = emoji
+        }
+
+        if let categoryTitle, !categoryTitle.isEmpty {
+            tracker.categoryTitle = categoryTitle
+        }
+
+        tracker.daysOfWeek = daysOfWeek
+    }
 }

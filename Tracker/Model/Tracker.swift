@@ -2,11 +2,11 @@ import UIKit
 
 class Tracker: NSObject, Codable {
     let id: UUID
-    let color: Color
-    let title: String
-    let emoji: String
-    let categoryTitle: String
-    let daysOfWeek: Set<WeekDay>
+    var color: Color
+    var title: String
+    var emoji: String
+    var categoryTitle: String
+    var daysOfWeek: Set<WeekDay>
     let creationDate: Date
     var isPinned: Bool
     
