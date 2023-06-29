@@ -4,7 +4,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     var doneButtonAction: (() -> Void)?
     
     private let titleLabel = UILabel()
-    private let colorView = UIView()
+    let colorView = UIView()
     private let pinImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "pin.fill")?
@@ -35,12 +35,12 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(colorView)
         colorView.translatesAutoresizingMaskIntoConstraints = false
         colorView.layer.masksToBounds = true
-        colorView.layer.cornerRadius = 16
+        colorView.layer.cornerRadius = 13
         
-        contentView.addSubview(emojiLabel)
+        colorView.addSubview(emojiLabel)
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        contentView.addSubview(titleLabel)
+        colorView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textColor = Colors.white
         
@@ -51,7 +51,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
 
-        contentView.addSubview(pinImage)
+        colorView.addSubview(pinImage)
         pinImage.translatesAutoresizingMaskIntoConstraints = false
         
         let constraints = [
@@ -108,5 +108,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     @objc private func doneButtonTapped() {
         doneButtonAction?()
+    }
+
+    func contextMenuPreview() -> UIView? {
+        colorView.snapshotView(afterScreenUpdates: false)
     }
 }

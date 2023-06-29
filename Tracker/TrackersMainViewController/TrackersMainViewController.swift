@@ -42,7 +42,7 @@ class TrackersMainViewController: UIViewController {
     }
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    
+
     private let geometricParams = GeometricParams(cellCount: 2, leftInset: 10, rightInset: 10, cellSpacing: 10)
     
     private let datePicker: UIDatePicker = {
@@ -122,8 +122,7 @@ class TrackersMainViewController: UIViewController {
         uiSearchTextField.addTarget(self, action: #selector(textFieldDidBeginEditing), for: .editingDidBegin)
         uiSearchTextField.addTarget(self, action: #selector(textFieldEditingDidEndOnExit), for: .editingDidEndOnExit)
         clearSearchFieldButton.addTarget(self, action: #selector(clearSearchField), for: .touchUpInside)
-        
-        
+
         navBarConfig()
         setupConstraints()
         updateUI()
@@ -405,6 +404,20 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
         return geometricParams.cellSpacing
     }
 
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let view = (collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell)?.colorView else {
+            return nil
+        }
+        return UITargetedPreview(view: view)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let view = (collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell)?.colorView else {
+            return nil
+        }
+        return UITargetedPreview(view: view)
+    }
+
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else {
             return nil
@@ -416,7 +429,12 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
         ? "TrackersMainVC.contextMenu.unpin".localized
         : "TrackersMainVC.contextMenu.pin".localized
 
-        return UIContextMenuConfiguration(actionProvider: { actions in
+        return UIContextMenuConfiguration {
+            let vc = UIViewController()
+            vc.view = (collectionView.cellForItem(at: indexPath)! as! TrackerCollectionViewCell).contextMenuPreview()!
+            vc.preferredContentSize = vc.view.frame.size
+            return vc
+        } actionProvider: { actions in
             return UIMenu(children: [
                 UIAction(title: pinned) { [weak self] _ in
                     self?.pinTracker(indexPath: indexPath)
@@ -428,7 +446,7 @@ extension TrackersMainViewController: UICollectionViewDelegateFlowLayout {
                     self?.deleteTracker(indexPath: indexPath)
                 },
             ])
-        })
+        }
     }
 }
 
