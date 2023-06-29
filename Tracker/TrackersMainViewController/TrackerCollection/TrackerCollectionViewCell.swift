@@ -17,8 +17,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.heightAnchor.constraint(equalToConstant: 22).isActive = true
-        label.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     

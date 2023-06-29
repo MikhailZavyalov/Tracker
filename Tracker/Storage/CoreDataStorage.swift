@@ -95,6 +95,9 @@ final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
         }) else {
             throw CoreDataStorageError.entityWithSpecifiedIdNotFound
         }
+        trackerCoreData.records?
+            .compactMap { $0 as? TrackerRecordCoreData }
+            .forEach { context.delete($0) }
         context.delete(trackerCoreData)
         try updateData()
     }
