@@ -320,9 +320,6 @@ extension TrackerSettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            // TODO: - Implement category change for a tracker
-            if editingTracker != nil { return }
-
             let model = CategoryListModel()
             let viewModel = CategoryListViewModel(model: model)
             viewModel.selectedCategory = currentSettings.categoryTitle

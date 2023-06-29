@@ -16,6 +16,7 @@ protocol CoreDataStorageProtocol: NSObject {
 private enum CoreDataStorageError: Error {
     case invalidNSManagedObject(NSManagedObject)
     case entityWithSpecifiedIdNotFound
+    case trackerWithInvalidCategory
 }
 
 final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
@@ -106,6 +107,25 @@ final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
             throw CoreDataStorageError.entityWithSpecifiedIdNotFound
         }
         try copyProperties(from: tracker, to: trackerCoreData)
+
+        if trackerCoreData.categoryTitle != tracker.categoryTitle {
+            // remove current tracker from old category trackers
+            let oldCategory = trackerCoreData.category
+            var oldCategoryTrackers = (oldCategory?.trackers ?? []) as Set
+            oldCategoryTrackers.remove(trackerCoreData)
+            oldCategory?.trackers = oldCategoryTrackers as NSSet
+
+            // add current tracker to its new category
+            guard let newCategory = try fetchCategories()
+                .first(where: { $0.name == tracker.categoryTitle })
+            else {
+                throw CoreDataStorageError.trackerWithInvalidCategory
+            }
+
+            var newCategoryTrackers = (newCategory.trackers ?? []) as Set
+            newCategoryTrackers.insert(trackerCoreData)
+            newCategory.trackers = newCategoryTrackers as NSSet
+        }
 
         try context.save()
         try updateData()
