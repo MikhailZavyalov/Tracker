@@ -2,10 +2,10 @@ import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
     var doneButtonAction: (() -> Void)?
+    let colorView = UIView()
     
     private let titleLabel = UILabel()
-    let colorView = UIView()
-    private let pinImage: UIImageView = {
+    private let pinImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "pin.fill")?
             .withTintColor(Colors.white)
@@ -14,6 +14,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         imageView.preferredSymbolConfiguration = config
         return imageView
     }()
+
+    private let checkmarkImage = UIImage(systemName: "checkmark")?
+        .withTintColor(Colors.white)
+        .withRenderingMode(.alwaysOriginal)
+        .applyingSymbolConfiguration(UIImage.SymbolConfiguration(font: .systemFont(ofSize: 12)))
+
+    private let plusImage = UIImage(systemName: "plus")?
+        .withTintColor(Colors.white)
+        .withRenderingMode(.alwaysOriginal)
+        .applyingSymbolConfiguration(UIImage.SymbolConfiguration(font: .systemFont(ofSize: 12)))
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
@@ -25,7 +35,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private let doneButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 17
-        button.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         return button
     }()
     
@@ -51,8 +60,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
 
-        colorView.addSubview(pinImage)
-        pinImage.translatesAutoresizingMaskIntoConstraints = false
+        colorView.addSubview(pinImageView)
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
         
         let constraints = [
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -81,8 +90,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             doneButton.heightAnchor.constraint(equalToConstant: 34),
             doneButton.widthAnchor.constraint(equalToConstant: 34),
 
-            pinImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),
-            pinImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            pinImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
         ]
 
         constraints.forEach {
@@ -101,9 +110,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         colorView.backgroundColor = model.color
         emojiLabel.text = model.emoji
         dateLabel.text = String(format: "TrackerCollectionViewCell.dataLabel.text".localized, model.daysCompleted)
-        doneButton.setImage(model.isCompleted ? UIImage(named: "done") : UIImage(named: "plus [black]"), for: .normal)
+        doneButton.setImage(model.isCompleted ? checkmarkImage : plusImage, for: .normal)
         doneButton.backgroundColor = model.isCompleted ? model.color.withAlphaComponent(0.7) : model.color
-        pinImage.isHidden = !model.isPinned
+        pinImageView.isHidden = !model.isPinned
     }
     
     @objc private func doneButtonTapped() {

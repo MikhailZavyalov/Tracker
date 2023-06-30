@@ -3,16 +3,23 @@ import SnapshotTesting
 @testable import Tracker
 
 final class TrackerSnapshotTests: XCTestCase {
-    func testViewController() {
+    func testMainViewControllerLightAppearance() {
         let storage = FakeCoreDataStorage()
         let vc = TrackersMainViewController(storage: storage)
+
+        assertSnapshot(matching: vc, as: .image)
+    }
+
+    func testMainViewControllerDarkAppearance() {
+        let storage = FakeCoreDataStorage()
+        let vc = TrackersMainViewController(storage: storage)
+        vc.overrideUserInterfaceStyle = .dark
 
         assertSnapshot(matching: vc, as: .image)
     }
 }
 
 private class FakeCoreDataStorage: NSObject, CoreDataStorageProtocol {
-
     @objc dynamic
     var trackerCategories = [
         TrackerCategory(
@@ -55,4 +62,6 @@ private class FakeCoreDataStorage: NSObject, CoreDataStorageProtocol {
     func add(tracker: Tracker) throws {}
     func add(trackerRecord: TrackerRecord) throws {}
     func delete(trackerRecord: TrackerRecord) throws {}
+    func delete(tracker: Tracker) throws {}
+    func overwriteTracker(tracker: Tracker) throws {}
 }
