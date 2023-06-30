@@ -9,3 +9,5 @@ class TrackerCategory: NSObject, Codable {
         self.trackers = trackers
     }
 }
+
+final class TrackerPseudoCategory: TrackerCategory {}

@@ -1,4 +1,5 @@
 import UIKit
+import CoreImage
 
 final class ColorsPickerView: UIView {
     enum Const {
@@ -39,6 +40,19 @@ final class ColorsPickerView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func selectColor(_ color: UIColor, animated: Bool = false) {
+        guard let index = colorCellModels.firstIndex(where: {
+            let currentColor = CIColor(color: $0.color)
+            let targetColor = CIColor(color: color)
+            return currentColor.red == targetColor.red
+            && currentColor.green == targetColor.green
+            && currentColor.blue == targetColor.blue
+        }) else {
+            return
+        }
+        collectionView.selectItem(at: IndexPath(item: index, section: 0), animated: animated, scrollPosition: .centeredHorizontally)
     }
     
     private func setupConstraints() {

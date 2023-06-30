@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let trackersViewController = UINavigationController(rootViewController: TrackersMainViewController())
         let statisticsViewController = UINavigationController(rootViewController: StatisticsViewController())
-        statisticsViewController.title = "Статистика"
+        statisticsViewController.title = "StatisticsVC.title".localized
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [trackersViewController, statisticsViewController]
         tabBarController.viewControllers?[0].tabBarItem.image = UIImage(named: "record.circle.fill")
@@ -41,7 +41,7 @@ struct Scene_Previews: PreviewProvider {
   static var previews: some View {
       let trackersViewController = UINavigationController(rootViewController: TrackersMainViewController())
       let statisticsViewController = UINavigationController(rootViewController: StatisticsViewController())
-      statisticsViewController.title = "Статистика"
+      statisticsViewController.title = "StatisticsVC.title"
       let tabBarController = UITabBarController()
       tabBarController.viewControllers = [trackersViewController, statisticsViewController]
       
