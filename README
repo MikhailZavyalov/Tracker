@@ -19,4 +19,5 @@
 - CocoaPods
 
 # Стек технологий
-- Svift, MVVM, Code layout, Extentions, WebView, CollectionView, TableView, TabBar, UITests, UnitTests
+- Swift, MVVM, Code layout, Extentions, WebView, CollectionView, 
+TableView, TabBar, UITests, UnitTests, DispatchQueue, Delegate, JSON
