@@ -8,6 +8,10 @@
 Контроль привычек по дням недели;
 Просмотр прогресса по привычкам;
 
+# Ссылки
+
+[Дизайн в Figma](https://www.figma.com/file/owAO4CAPTJdpM1BZU5JHv7/Tracker-(YP)?type=design&mode=design&t=2M5Z5GmlghbTAs8a-0)
+
 # Инструкция по установке
 - Скачать и запустить
 
