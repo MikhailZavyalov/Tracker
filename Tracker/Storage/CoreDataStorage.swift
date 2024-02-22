@@ -2,11 +2,24 @@ import Foundation
 import UIKit
 import CoreData
 
-private enum CoreDataStorageError: Error {
-    case invalidNSManagedObject(NSManagedObject)
+protocol CoreDataStorageProtocol: NSObject {
+    func observeTrackerCategories(onChange: @escaping ([TrackerCategory]) -> Void) -> NSKeyValueObservation
+    func observeTrackerRecords(onChange: @escaping ([TrackerRecord]) -> Void) -> NSKeyValueObservation
+
+    func add(tracker: Tracker) throws
+    func add(trackerRecord: TrackerRecord) throws
+    func delete(trackerRecord: TrackerRecord) throws
+    func delete(tracker: Tracker) throws
+    func overwriteTracker(tracker: Tracker) throws
 }
 
-final class CoreDataStorage: NSObject {
+private enum CoreDataStorageError: Error {
+    case invalidNSManagedObject(NSManagedObject)
+    case entityWithSpecifiedIdNotFound
+    case trackerWithInvalidCategory
+}
+
+final class CoreDataStorage: NSObject, CoreDataStorageProtocol {
     static let shared = CoreDataStorage()
     
     @objc dynamic
@@ -29,12 +42,7 @@ final class CoreDataStorage: NSObject {
     
     func add(tracker: Tracker) throws {
         let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.color = try JSONEncoder().encode(tracker.color)
-        trackerCoreData.daysOfWeek = try JSONEncoder().encode(tracker.daysOfWeek)
-        trackerCoreData.trackerId = tracker.id
-        trackerCoreData.title = tracker.title
-        trackerCoreData.creationDate = tracker.creationDate
+        try copyProperties(from: tracker, to: trackerCoreData)
         trackerCoreData.records = []
         
         let categories = try fetchCategories()
@@ -67,10 +75,9 @@ final class CoreDataStorage: NSObject {
         }
 
         try context.save()
-        
         try updateData()
     }
-    
+
     func delete(trackerRecord: TrackerRecord) throws {
         let records = try fetchRecords()
         let record = records.first {
@@ -79,6 +86,62 @@ final class CoreDataStorage: NSObject {
         }
         context.delete(record!)
         try updateData()
+    }
+
+    func delete(tracker: Tracker) throws {
+        let trackers = try fetchTrackers()
+        guard let trackerCoreData = trackers.first(where: {
+            $0.trackerId == tracker.id
+        }) else {
+            throw CoreDataStorageError.entityWithSpecifiedIdNotFound
+        }
+        trackerCoreData.records?
+            .compactMap { $0 as? TrackerRecordCoreData }
+            .forEach { context.delete($0) }
+        context.delete(trackerCoreData)
+        try updateData()
+    }
+
+    func overwriteTracker(tracker: Tracker) throws {
+        let trackers = try fetchTrackers()
+        guard let trackerCoreData = trackers.first(where: {
+            $0.trackerId == tracker.id
+        }) else {
+            throw CoreDataStorageError.entityWithSpecifiedIdNotFound
+        }
+        try copyProperties(from: tracker, to: trackerCoreData)
+
+        if trackerCoreData.categoryTitle != tracker.categoryTitle {
+            // remove current tracker from old category trackers
+            let oldCategory = trackerCoreData.category
+            var oldCategoryTrackers = (oldCategory?.trackers ?? []) as Set
+            oldCategoryTrackers.remove(trackerCoreData)
+            oldCategory?.trackers = oldCategoryTrackers as NSSet
+
+            // add current tracker to its new category
+            guard let newCategory = try fetchCategories()
+                .first(where: { $0.name == tracker.categoryTitle })
+            else {
+                throw CoreDataStorageError.trackerWithInvalidCategory
+            }
+
+            var newCategoryTrackers = (newCategory.trackers ?? []) as Set
+            newCategoryTrackers.insert(trackerCoreData)
+            newCategory.trackers = newCategoryTrackers as NSSet
+        }
+
+        try context.save()
+        try updateData()
+    }
+
+    private func copyProperties(from tracker: Tracker, to trackerCoreData: TrackerCoreData) throws {
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.color = try JSONEncoder().encode(tracker.color)
+        trackerCoreData.daysOfWeek = try JSONEncoder().encode(tracker.daysOfWeek)
+        trackerCoreData.trackerId = tracker.id
+        trackerCoreData.title = tracker.title
+        trackerCoreData.creationDate = tracker.creationDate
+        trackerCoreData.isPinned = tracker.isPinned
     }
     
     private func updateData() throws {
@@ -124,7 +187,8 @@ extension TrackerCoreData {
             emoji: emoji,
             categoryTitle: categoryTitle,
             daysOfWeek: try JSONDecoder().decode(Set<Tracker.WeekDay>.self, from: daysOfWeek),
-            creationDate: creationDate
+            creationDate: creationDate,
+            isPinned: isPinned
         )
     }
 }
@@ -150,5 +214,25 @@ extension TrackerRecordCoreData {
             trackerId: trackerId,
             date: date
         )
+    }
+}
+
+extension CoreDataStorage {
+    func observeTrackerCategories(onChange: @escaping ([TrackerCategory]) -> Void) -> NSKeyValueObservation {
+        observe(
+            \.trackerCategories,
+             options: [.initial]
+        ) { storage, _ in
+            onChange(storage.trackerCategories)
+        }
+    }
+
+    func observeTrackerRecords(onChange: @escaping ([TrackerRecord]) -> Void) -> NSKeyValueObservation {
+        observe(
+            \.trackerRecords,
+             options: [.initial]
+        ) { storage, _ in
+            onChange(storage.trackerRecords)
+        }
     }
 }

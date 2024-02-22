@@ -7,7 +7,7 @@ final class AddNewTrackerViewController: UIViewController {
     private let addNewTrackerViewLabel: UILabel = {
         let addNewTrackerViewLabel = UILabel()
         addNewTrackerViewLabel.translatesAutoresizingMaskIntoConstraints = false
-        addNewTrackerViewLabel.text = "Cоздание трекера"
+        addNewTrackerViewLabel.text = "addNewTrackerViewLabel.text".localized
         addNewTrackerViewLabel.textColor = Colors.black
         return addNewTrackerViewLabel
     }()
